@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Socratic Questioning for Agile Coaches</title>
+<style>
+  :root {
+    --bg: #faf8f5;
+    --surface: #ffffff;
+    --text: #2d2a26;
+    --text-muted: #6b6560;
+    --accent: #8b6f4e;
+    --accent-light: #c9a97a;
+    --accent-bg: #f3ece3;
+    --border: #e4ddd4;
+    --shadow: 0 2px 8px rgba(45,42,38,0.08);
+    --shadow-lg: 0 4px 20px rgba(45,42,38,0.12);
+    --radius: 10px;
+    --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    --cat1: #7a6352; --cat1-bg: #f5ede6;
+    --cat2: #8b6f4e; --cat2-bg: #f3ece3;
+    --cat3: #6b7c5e; --cat3-bg: #edf2e8;
+    --cat4: #5e6f7c; --cat4-bg: #e8eef2;
+    --cat5: #7c5e6f; --cat5-bg: #f2e8ee;
+    --cat6: #5e7c6b; --cat6-bg: #e8f2ed;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Nav ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(250,248,245,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0.75rem 2rem;
+    display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;
+  }
+  nav a {
+    color: var(--text-muted); text-decoration: none; font-size: 0.85rem;
+    font-weight: 500; padding: 0.3rem 0.6rem; border-radius: 6px;
+    transition: var(--transition);
+  }
+  nav a:hover, nav a:focus { color: var(--accent); background: var(--accent-bg); }
+  nav .brand { color: var(--accent); font-weight: 700; font-size: 0.95rem; margin-right: auto; }
+
+  /* ── Layout ── */
+  .container { max-width: 960px; margin: 0 auto; padding: 0 1.5rem; }
+  section { padding: 3.5rem 0; }
+  section + section { border-top: 1px solid var(--border); }
+
+  h1 { font-size: 2.4rem; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
+  h2 { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 1rem; color: var(--accent); }
+  h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; }
+  p { margin-bottom: 1rem; }
+  .lead { font-size: 1.15rem; color: var(--text-muted); }
+
+  /* ── Hero ── */
+  .hero { padding: 5rem 0 3.5rem; text-align: center; }
+  .hero h1 { margin-bottom: 1rem; }
+  .hero .lead { max-width: 640px; margin: 0 auto 2rem; }
+  .hero blockquote {
+    font-style: italic; color: var(--accent); font-size: 1.1rem;
+    border-left: 3px solid var(--accent-light); padding-left: 1.2rem;
+    max-width: 500px; margin: 0 auto; text-align: left;
+  }
+  .hero blockquote cite { display: block; font-size: 0.85rem; margin-top: 0.4rem; font-style: normal; color: var(--text-muted); }
+
+  /* ── Cards (6 types) ── */
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    cursor: pointer; transition: var(--transition); overflow: hidden;
+  }
+  .card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+  .card.open { box-shadow: var(--shadow-lg); }
+
+  .card-header {
+    padding: 1.2rem 1.4rem; display: flex; align-items: center; gap: 0.8rem;
+    user-select: none;
+  }
+  .card-number {
+    width: 2.2rem; height: 2.2rem; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.85rem; color: #fff; flex-shrink: 0;
+  }
+  .card-header h3 { margin: 0; font-size: 1rem; flex: 1; }
+  .card-chevron {
+    width: 20px; height: 20px; transition: transform var(--transition); flex-shrink: 0;
+    color: var(--text-muted);
+  }
+  .card.open .card-chevron { transform: rotate(180deg); }
+
+  .card-body {
+    max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s ease;
+    padding: 0 1.4rem;
+  }
+  .card.open .card-body { max-height: 800px; padding: 0 1.4rem 1.4rem; }
+
+  .card-body .tag {
+    display: inline-block; font-size: 0.75rem; font-weight: 600;
+    padding: 0.15rem 0.55rem; border-radius: 4px; margin-bottom: 0.6rem;
+    text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  .card-body ul { padding-left: 1.2rem; margin-bottom: 0.8rem; }
+  .card-body li { margin-bottom: 0.35rem; font-size: 0.92rem; }
+  .card-body li em { color: var(--accent); }
+  .card-body .tip {
+    background: var(--accent-bg); border-radius: 6px; padding: 0.7rem 1rem;
+    font-size: 0.88rem; margin-top: 0.5rem;
+  }
+  .card-body .tip strong { color: var(--accent); }
+
+  .cat1 .card-number { background: var(--cat1); } .cat1 .tag { background: var(--cat1-bg); color: var(--cat1); }
+  .cat2 .card-number { background: var(--cat2); } .cat2 .tag { background: var(--cat2-bg); color: var(--cat2); }
+  .cat3 .card-number { background: var(--cat3); } .cat3 .tag { background: var(--cat3-bg); color: var(--cat3); }
+  .cat4 .card-number { background: var(--cat4); } .cat4 .tag { background: var(--cat4-bg); color: var(--cat4); }
+  .cat5 .card-number { background: var(--cat5); } .cat5 .tag { background: var(--cat5-bg); color: var(--cat5); }
+  .cat6 .card-number { background: var(--cat6); } .cat6 .tag { background: var(--cat6-bg); color: var(--cat6); }
+
+  /* ── Ceremony Filter ── */
+  .filter-bar {
+    display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem;
+  }
+  .filter-btn {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
+    padding: 0.45rem 1rem; font-size: 0.85rem; font-weight: 500;
+    cursor: pointer; transition: var(--transition); color: var(--text-muted);
+  }
+  .filter-btn:hover { border-color: var(--accent-light); color: var(--accent); }
+  .filter-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  .ceremony-results { display: grid; gap: 0.8rem; }
+  .ceremony-item {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 1rem 1.2rem; transition: var(--transition);
+  }
+  .ceremony-item .q-type {
+    font-size: 0.72rem; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.04em; margin-bottom: 0.3rem;
+  }
+  .ceremony-item .q-text { font-size: 0.95rem; font-style: italic; color: var(--text); }
+  .ceremony-item .q-context { font-size: 0.82rem; color: var(--text-muted); margin-top: 0.3rem; }
+  .ceremony-item[hidden] { display: none; }
+
+  /* ── Circular Questions ── */
+  .circular-demo {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 1.5rem; margin-top: 1.5rem;
+  }
+  .role-selectors { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; align-items: center; }
+  .role-selectors label { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); }
+  .role-selectors select {
+    padding: 0.4rem 0.8rem; border: 1px solid var(--border); border-radius: 6px;
+    font-size: 0.9rem; background: var(--bg); color: var(--text);
+  }
+  .circular-output {
+    background: var(--accent-bg); border-radius: 8px; padding: 1.2rem;
+    font-size: 0.95rem; line-height: 1.7; min-height: 80px;
+  }
+  .circular-output em { color: var(--accent); font-style: normal; font-weight: 600; }
+
+  /* ── Worksheet ── */
+  .worksheet {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 2rem; margin-top: 1rem;
+  }
+  .ws-step {
+    margin-bottom: 1.2rem; border-left: 3px solid var(--border);
+    padding-left: 1.2rem; transition: border-color var(--transition);
+  }
+  .ws-step.active { border-left-color: var(--accent); }
+  .ws-step label {
+    display: block; font-weight: 600; font-size: 0.92rem;
+    margin-bottom: 0.4rem; cursor: pointer; color: var(--text);
+  }
+  .ws-step label:hover { color: var(--accent); }
+  .ws-step textarea {
+    width: 100%; border: 1px solid var(--border); border-radius: 6px;
+    padding: 0.7rem; font-size: 0.9rem; font-family: inherit;
+    resize: vertical; min-height: 60px; background: var(--bg);
+    transition: border-color var(--transition);
+  }
+  .ws-step textarea:focus { outline: none; border-color: var(--accent); }
+  .ws-step.final { border-left-color: var(--accent); }
+  .ws-step.final label { color: var(--accent); font-size: 1rem; }
+  .ws-step.final textarea { min-height: 80px; background: var(--accent-bg); }
+
+  .ws-actions { display: flex; gap: 0.8rem; margin-top: 1.5rem; flex-wrap: wrap; }
+  .btn {
+    padding: 0.55rem 1.2rem; border-radius: 8px; font-size: 0.88rem;
+    font-weight: 600; cursor: pointer; border: none; transition: var(--transition);
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: #7a5f40; }
+  .btn-secondary { background: var(--accent-bg); color: var(--accent); border: 1px solid var(--border); }
+  .btn-secondary:hover { background: var(--border); }
+
+  /* ── Flow Guide ── */
+  .flow-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+  .flow-table th, .flow-table td {
+    padding: 0.7rem 1rem; text-align: left; border-bottom: 1px solid var(--border);
+    font-size: 0.9rem;
+  }
+  .flow-table th { font-weight: 600; color: var(--accent); background: var(--accent-bg); }
+  .flow-table tr:last-child td { border-bottom: none; }
+  .flow-arrow {
+    display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;
+    margin-top: 1.5rem; justify-content: center;
+  }
+  .flow-step {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 0.5rem 1rem; font-size: 0.82rem; font-weight: 600; text-align: center;
+  }
+  .flow-step .step-label { font-size: 0.7rem; color: var(--text-muted); font-weight: 400; display: block; }
+  .flow-divider { color: var(--accent-light); font-size: 1.2rem; }
+
+  /* ── Footer ── */
+  footer {
+    border-top: 1px solid var(--border); padding: 2rem 0; text-align: center;
+    font-size: 0.82rem; color: var(--text-muted);
+  }
+  footer a { color: var(--accent); }
+
+  /* ── Responsive ── */
+  @media (max-width: 600px) {
+    .hero { padding: 3rem 0 2rem; }
+    h1 { font-size: 1.8rem; }
+    h2 { font-size: 1.3rem; }
+    nav { padding: 0.5rem 1rem; }
+    .container { padding: 0 1rem; }
+    .card-grid { grid-template-columns: 1fr; }
+    .flow-arrow { flex-direction: column; }
+    .flow-divider { transform: rotate(90deg); }
+  }
+
+  /* ── Print ── */
+  @media print {
+    nav { display: none; }
+    .card-body { max-height: none !important; padding: 0 1.4rem 1.4rem !important; }
+    .ceremony-item[hidden] { display: block !important; }
+    .worksheet textarea { border: 1px solid #ccc; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ NAV ═══════════════ -->
+<nav>
+  <span class="brand">Socratic Coach</span>
+  <a href="#types">6 Question Types</a>
+  <a href="#ceremonies">By Ceremony</a>
+  <a href="#circular">Circular Questions</a>
+  <a href="#worksheet">Worksheet</a>
+  <a href="#flow">Flow Guide</a>
+</nav>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<section class="hero">
+  <div class="container">
+    <h1>Socratic Questioning<br>for Agile Coaches</h1>
+    <p class="lead">
+      An interactive toolkit for asking the questions that help product teams think deeper,
+      challenge assumptions, and arrive at their own answers.
+    </p>
+    <blockquote>
+      "Education is the kindling of a flame, not the filling of a vessel."
+      <cite>&mdash; Attributed to Socrates (from <em>ex duco</em>: to lead out)</cite>
+    </blockquote>
+  </div>
+</section>
+
+<!-- ═══════════════ 6 TYPES ═══════════════ -->
+<section id="types">
+  <div class="container">
+    <h2>The Six Types of Socratic Questions</h2>
+    <p class="lead">Each type serves a different purpose. Click to expand and explore examples tailored for agile product teams.</p>
+
+    <div class="card-grid">
+
+      <!-- Type 1 -->
+      <div class="card cat1" data-card>
+        <div class="card-header">
+          <span class="card-number">1</span>
+          <h3>Conceptual Clarification</h3>
+          <svg class="card-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"/></svg>
+        </div>
+        <div class="card-body">
+          <span class="tag">Go deeper</span>
+          <p>Get them to think more about what exactly they are asking or thinking about. Surface hidden misalignment in language the team <em>thinks</em> they agree on.</p>
+          <h3>When to use in agile</h3>
+          <p>Sprint planning, story refinement, whenever someone uses vague terms like "quality," "done," or "the process is broken."</p>
+          <h3>Example questions</h3>
+          <ul>
+            <li><em>"When you say 'done,' what does that look like specifically?"</em></li>
+            <li><em>"What do we already know about this user's problem?"</em></li>
+            <li><em>"Are you saying we should stop doing X, or change how we do X?"</em></li>
+            <li><em>"Can you give me an example of what you mean?"</em></li>
+            <li><em>"How does this relate to what we discussed last sprint?"</em></li>
+            <li><em>"Can you rephrase that so the whole team has the same picture?"</em></li>
+          </ul>
+          <div class="tip"><strong>Watch for:</strong> Teams often skip clarification because they assume shared understanding. Your job is to slow them down right here. The cost of aligning on words is tiny compared to the cost of building the wrong thing.</div>
+        </div>
+      </div>
+
+      <!-- Type 2 -->
+      <div class="card cat2" data-card>
+        <div class="card-header">
+          <span class="card-number">2</span>
+          <h3>Probing Assumptions</h3>
+          <svg class="card-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"/></svg>
+        </div>
+        <div class="card-body">
+          <span class="tag">Shake the bedrock</span>
+          <p>Make them think about the presuppositions and unquestioned beliefs on which they are founding their argument. Unexamined assumptions are where bad sprint commitments and failed products come from.</p>
+          <h3>When to use in agile</h3>
+          <p>Estimation, backlog prioritization, any time someone says "obviously" or "we always do it this way."</p>
+          <h3>Example questions</h3>
+          <ul>
+            <li><em>"What are we assuming about how users will react to this?"</em></li>
+            <li><em>"We seem to be assuming the API will be stable &mdash; how can we verify that?"</em></li>
+            <li><em>"What if the opposite were true?"</em></li>
+            <li><em>"What would happen if we didn't build this feature at all?"</em></li>
+            <li><em>"How did we choose those assumptions?"</em></li>
+            <li><em>"And what else?"</em> &mdash; the first assumption named is rarely the most important one</li>
+          </ul>
+          <div class="tip"><strong>Watch for:</strong> The "AWE question" &mdash; <em>"And what else?"</em> &mdash; is deceptively powerful. Keep asking it. Their first answer is never their only answer, and rarely their best.</div>
+        </div>
+      </div>
+
+      <!-- Type 3 -->
+      <div class="card cat3" data-card>
+        <div class="card-header">
+          <span class="card-number">3</span>
+          <h3>Probing Rationale &amp; Evidence</h3>
+          <svg class="card-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"/></svg>
+        </div>
+        <div class="card-body">
+          <span class="tag">Show the evidence</span>
+          <p>When they give a rationale, dig into that reasoning rather than assuming it is a given. This moves a team from opinion-driven to evidence-driven &mdash; the engine behind "inspect and adapt."</p>
+          <h3>When to use in agile</h3>
+          <p>Sprint review (did we validate the hypothesis?), when someone advocates strongly for a technical approach, retrospectives when diagnosing root causes.</p>
+          <h3>Example questions</h3>
+          <ul>
+            <li><em>"What data do we have that supports this priority?"</em></li>
+            <li><em>"How might we experiment to validate this before committing a full sprint?"</em></li>
+            <li><em>"Is this based on what users told us, or what we think they need?"</em></li>
+            <li><em>"Would that reasoning stand up if we presented it to stakeholders?"</em></li>
+            <li><em>"How do you know this? Show me."</em></li>
+            <li><em>"What evidence is there to support what you are saying?"</em></li>
+          </ul>
+          <div class="tip"><strong>Watch for:</strong> This category is the Socratic engine behind empiricism. You're teaching the team to demand evidence from themselves &mdash; not from you.</div>
+        </div>
+      </div>
+
+      <!-- Type 4 -->
+      <div class="card cat4" data-card>
+        <div class="card-header">
+          <span class="card-number">4</span>
+          <h3>Questioning Viewpoints &amp; Perspectives</h3>
+          <svg class="card-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"/></svg>
+        </div>
+        <div class="card-body">
+          <span class="tag">Widen the lens</span>
+          <p>Most arguments come from a particular position. Show that there are other, equally valid, viewpoints. This is arguably <strong>the most important category for team coaching</strong> because it breaks siloed thinking and builds collective intelligence.</p>
+          <h3>When to use in agile</h3>
+          <p>When the loudest voice dominates, cross-functional tensions (dev vs. design vs. product), retrospectives, stakeholder alignment sessions.</p>
+          <h3>Example questions</h3>
+          <ul>
+            <li><em>"How would our end user describe this problem?"</em></li>
+            <li><em>"What would the ops team say about this architectural choice?"</em></li>
+            <li><em>"Who benefits from keeping things the way they are?"</em></li>
+            <li><em>"If we asked the stakeholder what success looks like, would they say the same thing?"</em></li>
+            <li><em>"What alternative ways of looking at this are there?"</em></li>
+            <li><em>"How could you look at this another way?"</em></li>
+          </ul>
+          <div class="tip"><strong>Watch for:</strong> This type naturally extends into <strong>circular questions</strong> (see below) &mdash; asking person A about person B's perspective. Extremely powerful for surfacing hidden team dynamics.</div>
+        </div>
+      </div>
+
+      <!-- Type 5 -->
+      <div class="card cat5" data-card>
+        <div class="card-header">
+          <span class="card-number">5</span>
+          <h3>Probing Implications &amp; Consequences</h3>
+          <svg class="card-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"/></svg>
+        </div>
+        <div class="card-body">
+          <span class="tag">Then what happens?</span>
+          <p>The argument they give may have logical implications that can be forecast. Do these make sense? Are they desirable? These questions pull teams into systems thinking &mdash; seeing downstream effects and ripple impacts.</p>
+          <h3>When to use in agile</h3>
+          <p>Technical debt discussions, prioritization trade-offs, when a team wants to take a shortcut, when they're avoiding a hard decision.</p>
+          <h3>Example questions</h3>
+          <ul>
+            <li><em>"If we don't address this tech debt now, what will the next three sprints look like?"</em></li>
+            <li><em>"What are the consequences of that assumption for our users?"</em></li>
+            <li><em>"If this works, what does it make possible? If it doesn't, what have we learned?"</em></li>
+            <li><em>"How does this decision affect the other teams who depend on us?"</em></li>
+            <li><em>"Why is this important? What is the best outcome, and why?"</em></li>
+          </ul>
+          <div class="tip"><strong>Watch for:</strong> Peter Hawkins' "Connecting" discipline in systemic team coaching emphasizes that teams must consider their impact on the wider system. These questions train that muscle.</div>
+        </div>
+      </div>
+
+      <!-- Type 6 -->
+      <div class="card cat6" data-card>
+        <div class="card-header">
+          <span class="card-number">6</span>
+          <h3>Questions About the Question</h3>
+          <svg class="card-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"/></svg>
+        </div>
+        <div class="card-body">
+          <span class="tag">Go meta</span>
+          <p>Turn the question in on itself. This is the meta-level &mdash; it interrupts unproductive patterns and helps the team become aware of their own thinking process. The most coaching-like of all six types.</p>
+          <h3>When to use in agile</h3>
+          <p>When a discussion goes in circles, when the team debates something that might not matter, when you want to build self-awareness about decision-making.</p>
+          <h3>Example questions</h3>
+          <ul>
+            <li><em>"What's the real challenge here for you as a team?"</em></li>
+            <li><em>"I notice we've been discussing this for 20 minutes &mdash; what's making this decision hard?"</em></li>
+            <li><em>"Why do you think I'm asking you this instead of giving you the answer?"</em></li>
+            <li><em>"Is this the right question to be asking right now, or is there a deeper one?"</em></li>
+            <li><em>"What was the point of asking that question?"</em></li>
+          </ul>
+          <div class="tip"><strong>Watch for:</strong> When team members start asking these meta-questions themselves, you know the coaching is working. You're modelling that the <em>process of thinking</em> matters as much as the conclusion.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ CEREMONY FILTER ═══════════════ -->
+<section id="ceremonies">
+  <div class="container">
+    <h2>Questions by Agile Ceremony</h2>
+    <p class="lead">Select a ceremony to see relevant Socratic questions across all six types. Pull this up during your next session.</p>
+
+    <div class="filter-bar" role="tablist">
+      <button class="filter-btn active" role="tab" data-filter="all">All</button>
+      <button class="filter-btn" role="tab" data-filter="planning">Sprint Planning</button>
+      <button class="filter-btn" role="tab" data-filter="refinement">Refinement</button>
+      <button class="filter-btn" role="tab" data-filter="review">Sprint Review</button>
+      <button class="filter-btn" role="tab" data-filter="retro">Retrospective</button>
+      <button class="filter-btn" role="tab" data-filter="daily">Daily Standup</button>
+      <button class="filter-btn" role="tab" data-filter="one-on-one">1-on-1 Coaching</button>
+    </div>
+
+    <div class="ceremony-results" id="ceremonyResults">
+      <!-- Planning -->
+      <div class="ceremony-item" data-ceremonies="planning refinement">
+        <div class="q-type" style="color:var(--cat1)">1 &middot; Clarification</div>
+        <div class="q-text">"What exactly does 'done' mean for this story? Can we be more specific?"</div>
+        <div class="q-context">When acceptance criteria are vague or assumed.</div>
+      </div>
+      <div class="ceremony-item" data-ceremonies="planning">
+        <div class="q-type" style="color:var(--cat2)">2 &middot; Assumptions</div>
+        <div class="q-text">"What assumptions are we making about user behavior in this story?"</div>
+        <div class="q-context">Before committing to a sprint scope.</div>
+      </div>
+      <div class="ceremony-item" data-ceremonies="planning refinement">
+        <div class="q-type" style="color:var(--cat2)">2 &middot; Assumptions</div>
+        <div class="q-text">"What would happen if we didn't build this feature at all?"</div>
+        <div class="q-context">To challenge default prioritization.</div>
+      </div>
+      <div class="ceremony-item" data-ceremonies="planning">
+        <div class="q-type" style="color:var(--cat3)">3 &middot; Evidence</div>
+        <div class="q-text">"What data do we have that supports sizing this as an 8?"</div>
+        <div class="q-context">When estimation feels like guesswork.</div>
+      </div>
+      <div class="ceremony-item" data-ceremonies="planning refinement">
+        <div class="q-type" style="color:var(--cat5)">5 &middot; Implications</div>
+        <div class="q-text">"If we take on this much work, what are the consequences for quality?"</div>
+        <div class="q-context">When the team is over-committing.</div>
+      </div>
+
+      <!-- Refinement -->
+      <div class="ceremony-item" data-ceremonies="refinement">
+        <div class="q-type" style="color:var(--cat1)">1 &middot; Clarification</div>
+        <div class="q-text">"What do we already know about this? What don't we know yet?"</div>
+        <div class="q-context">Opening a refinement discussion.</div>
+      </div>
+      <div class="ceremony-item" data-ceremonies="refinement">
+        <div class="q-type" style="color:var(--cat4)">4 &middot; Perspectives</div>
+        <div class="q-text">"How would our end user describe this problem in their own words?"</div>
+        <div class="q-context">To keep user-centricity during technical discussion.</div>
+      </div>
+      <div class="ceremony-item" data-ceremonies="refinement">
+        <div class="q-type" style="color:var(--cat3)">3 &middot; Evidence</div>
+        <div class="q-text">"How might we experiment to validate this before committing a full sprint?"</div>
+        <div class="q-context">When a story rests on an unvalidated hypothesis.</div>
+      </div>
+
+      <!-- Review -->
+      <div class="ceremony-item" data-ceremonies="review">
+        <div class="q-type" style="color:var(--cat3)">3 &middot; Evidence</div>
+        <div class="q-text">"What did we learn from users this sprint? What surprised us?"</div>
+        <div class="q-context">Opening the review with a learning stance.</div>
+      </div>
+      <div class="ceremony-item" data-ceremonies="review">
+        <div class="q-type" style="color:var(--cat2)">2 &middot; Assumptions</div>
+        <div class="q-text">"Which of our original assumptions about this feature turned out to be wrong?"</div>
+        <div class="q-context">After demoing completed work.</div>
+      </div>
+      <div class="ceremony-item" data-ceremonies="review">
+        <div class="q-type" style="color:var(--cat4)">4 &middot; Perspectives</div>
+        <div class="q-text">"If we asked the stakeholder what success looks like, would they say the same thing we just said?"</div>
+        <div class="q-context">Aligning team and stakeholder definitions of value.</div>
+      </div>
+      <div class="ceremony-item" data-ceremonies="review">
+        <div class="q-type" style="color:var(--cat5)">5 &middot; Implications</div>
+        <div class="q-text">"Based on what we've learned, what should we do differently next sprint?"</div>
+        <div class="q-context">Turning review insights into action.</div>
+      </div>
+
+      <!-- Retro -->
+      <div class="ceremony-item" data-ceremonies="retro">
+        <div class="q-type" style="color:var(--cat1)">1 &middot; Clarification</div>
+        <div class="q-text">"When you say 'communication was bad,' what specifically happened?"</div>
+        <div class="q-context">When retro feedback is vague.</div>
+      </div>
+      <div class="ceremony-item" data-ceremonies="retro">
+        <div class="q-type" style="color:var(--cat2)">2 &middot; Assumptions</div>
+        <div class="q-text">"We seem to be assuming this will fix itself &mdash; what if it doesn't?"</div>
+        <div class="q-context">When the team avoids addressing a recurring issue.</div>
+      </div>
+      <div class="ceremony-item" data-ceremonies="retro">
+        <div class="q-type" style="color:var(--cat3)">3 &middot; Evidence</div>
+        <div class="q-text">"What will happen if we don't tackle this technical debt now?"</div>
+        <div class="q-context">When weighing whether an improvement is worth the investment.</div>
+      </div>
+      <div class="ceremony-item" data-ceremonies="retro">
+        <div class="q-type" style="color:var(--cat4)">4 &middot; Perspectives</div>
+        <div class="q-text">"How do you think the rest of the team experienced that situation?"</div>
+        <div class="q-context">Surfacing different interpretations of the same event.</div>
+      </div>
+      <div class="ceremony-item" data-ceremonies="retro">
+        <div class="q-type" style="color:var(--cat5)">5 &middot; Implications</div>
+        <div class="q-text">"If we implement this improvement, what ripple effects might it have?"</div>
+        <div class="q-context">Thinking through the consequences of proposed changes.</div>
+      </div>
+      <div class="ceremony-item" data-ceremonies="retro">
+        <div class="q-type" style="color:var(--cat6)">6 &middot; Meta</div>
+        <div class="q-text">"I notice we keep discussing this same topic &mdash; what's making it hard to resolve?"</div>
+        <div class="q-context">When the retro is stuck in a loop.</div>
+      </div>
+
+      <!-- Daily -->
+      <div class="ceremony-item" data-ceremonies="daily">
+        <div class="q-type" style="color:var(--cat1)">1 &middot; Clarification</div>
+        <div class="q-text">"What does 'blocked' mean here &mdash; what exactly do you need to move forward?"</div>
+        <div class="q-context">When blockers are mentioned but not specified.</div>
+      </div>
+      <div class="ceremony-item" data-ceremonies="daily">
+        <div class="q-type" style="color:var(--cat5)">5 &middot; Implications</div>
+        <div class="q-text">"If this blocker stays unresolved today, what's the impact on the sprint goal?"</div>
+        <div class="q-context">Making the cost of inaction visible.</div>
+      </div>
+      <div class="ceremony-item" data-ceremonies="daily">
+        <div class="q-type" style="color:var(--cat4)">4 &middot; Perspectives</div>
+        <div class="q-text">"Who else on the team might be affected by this? Who could help?"</div>
+        <div class="q-context">Encouraging collaboration over solo problem-solving.</div>
+      </div>
+
+      <!-- 1-on-1 -->
+      <div class="ceremony-item" data-ceremonies="one-on-one">
+        <div class="q-type" style="color:var(--cat1)">1 &middot; Clarification</div>
+        <div class="q-text">"What's on your mind?"</div>
+        <div class="q-context">The kickstart question &mdash; open and focusing at the same time.</div>
+      </div>
+      <div class="ceremony-item" data-ceremonies="one-on-one">
+        <div class="q-type" style="color:var(--cat6)">6 &middot; Meta</div>
+        <div class="q-text">"What's the real challenge here for you?"</div>
+        <div class="q-context">The focus question &mdash; cuts through surface-level topics.</div>
+      </div>
+      <div class="ceremony-item" data-ceremonies="one-on-one">
+        <div class="q-type" style="color:var(--cat2)">2 &middot; Assumptions</div>
+        <div class="q-text">"You seem to be assuming that... &mdash; is that true?"</div>
+        <div class="q-context">Gently naming a hidden belief.</div>
+      </div>
+      <div class="ceremony-item" data-ceremonies="one-on-one">
+        <div class="q-type" style="color:var(--cat3)">3 &middot; Evidence</div>
+        <div class="q-text">"Am I basing this on feelings rather than facts?"</div>
+        <div class="q-context">Helping them self-check emotional reasoning.</div>
+      </div>
+      <div class="ceremony-item" data-ceremonies="one-on-one">
+        <div class="q-type" style="color:var(--cat4)">4 &middot; Perspectives</div>
+        <div class="q-text">"How might your colleague see this same situation differently?"</div>
+        <div class="q-context">Building empathy and widening perspective.</div>
+      </div>
+      <div class="ceremony-item" data-ceremonies="one-on-one">
+        <div class="q-type" style="color:var(--cat5)">5 &middot; Implications</div>
+        <div class="q-text">"If you keep believing this, what happens? And if you let it go?"</div>
+        <div class="q-context">Connecting a thought to future action.</div>
+      </div>
+      <div class="ceremony-item" data-ceremonies="one-on-one">
+        <div class="q-type" style="color:var(--cat2)">2 &middot; Assumptions</div>
+        <div class="q-text">"Is someone else's opinion overly influencing your own?"</div>
+        <div class="q-context">When they seem to be deferring to authority rather than their own judgement.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ CIRCULAR QUESTIONS ═══════════════ -->
+<section id="circular">
+  <div class="container">
+    <h2>Circular Questions for Team Dynamics</h2>
+    <p>Circular questions come from systemic family therapy and are a powerful extension of <strong>Type 4 (Perspectives)</strong>. Instead of asking someone about their own view, you ask <strong>person A to describe person B's perspective</strong>. This surfaces hidden dynamics, builds empathy, and reveals misalignment &mdash; without accusation.</p>
+    <p>They work because the person being asked has to genuinely step into someone else's shoes, and the person being described gets to hear how they're perceived.</p>
+
+    <h3>Why they matter for product teams</h3>
+    <ul style="padding-left:1.2rem; margin-bottom:1.5rem;">
+      <li>They highlight the <strong>diversity of assumptions</strong> within a team</li>
+      <li>They explore <strong>interaction patterns</strong> and relational dynamics</li>
+      <li>They help the team develop <strong>systemic solutions</strong> rather than individual fixes</li>
+      <li>They build <strong>co-responsibility and team empowerment</strong></li>
+    </ul>
+
+    <div class="circular-demo">
+      <h3>Interactive: Build a Circular Question</h3>
+      <p style="font-size:0.9rem;color:var(--text-muted);">Select roles to generate contextual circular questions for your team.</p>
+      <div class="role-selectors">
+        <label for="askee">Ask</label>
+        <select id="askee">
+          <option value="developer">a Developer</option>
+          <option value="designer">a Designer</option>
+          <option value="product-owner">the Product Owner</option>
+          <option value="tester">a Tester / QA</option>
+          <option value="scrum-master">the Scrum Master</option>
+          <option value="stakeholder">a Stakeholder</option>
+        </select>
+        <label for="about">about</label>
+        <select id="about">
+          <option value="designer">a Designer</option>
+          <option value="developer">a Developer</option>
+          <option value="product-owner">the Product Owner</option>
+          <option value="tester">a Tester / QA</option>
+          <option value="scrum-master">the Scrum Master</option>
+          <option value="stakeholder">a Stakeholder</option>
+          <option value="team">the whole Team</option>
+          <option value="users">the Users</option>
+        </select>
+      </div>
+      <div class="circular-output" id="circularOutput"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ WORKSHEET ═══════════════ -->
+<section id="worksheet">
+  <div class="container">
+    <h2>Cognitive Restructuring Worksheet</h2>
+    <p class="lead">Based on the Socratic questioning cognitive restructuring technique. Use this during 1-on-1 coaching to help a coachee examine and rebalance a thought. Click each question to focus on it.</p>
+
+    <div class="worksheet">
+      <div class="ws-step">
+        <label for="ws-thought">Thought I want to question:</label>
+        <textarea id="ws-thought" placeholder="Identify a thought that's negatively impacting how you feel..."></textarea>
+      </div>
+
+      <div class="ws-step">
+        <label for="ws-q1">1. What is the evidence for this thought? Against it?</label>
+        <textarea id="ws-q1" placeholder="List concrete evidence on both sides..."></textarea>
+      </div>
+
+      <div class="ws-step">
+        <label for="ws-q2">2. Am I basing this on feelings rather than facts?</label>
+        <textarea id="ws-q2" placeholder="Distinguish between what you feel and what you know..."></textarea>
+      </div>
+
+      <div class="ws-step">
+        <label for="ws-q3">3. Is my thought overly critical?</label>
+        <textarea id="ws-q3" placeholder="Would I say this to a friend in the same situation?"></textarea>
+      </div>
+
+      <div class="ws-step">
+        <label for="ws-q4">4. Could my thought be an exaggeration of what's true?</label>
+        <textarea id="ws-q4" placeholder="Am I using words like 'always,' 'never,' 'everyone'?"></textarea>
+      </div>
+
+      <div class="ws-step">
+        <label for="ws-q5">5. How might others interpret the same situation differently?</label>
+        <textarea id="ws-q5" placeholder="Consider a colleague, friend, or mentor's perspective..."></textarea>
+      </div>
+
+      <div class="ws-step">
+        <label for="ws-q6">6. Is my thought based more on habit or a past experience than what's true now?</label>
+        <textarea id="ws-q6" placeholder="Am I reacting to the current situation or an old pattern?"></textarea>
+      </div>
+
+      <div class="ws-step">
+        <label for="ws-q7">7. Is someone else's opinion overly influencing my own?</label>
+        <textarea id="ws-q7" placeholder="Whose voice am I hearing? Is it truly my own assessment?"></textarea>
+      </div>
+
+      <div class="ws-step">
+        <label for="ws-q8">8. Is my thought a likely scenario or just a possibility?</label>
+        <textarea id="ws-q8" placeholder="How probable is this, really?"></textarea>
+      </div>
+
+      <div class="ws-step final">
+        <label for="ws-rewrite">Drawing from your answers, rewrite your thought so it's more accurate and balanced:</label>
+        <textarea id="ws-rewrite" placeholder="A more balanced version of the original thought..."></textarea>
+      </div>
+
+      <div class="ws-actions">
+        <button class="btn btn-secondary" id="wsClear">Clear All</button>
+        <button class="btn btn-primary" id="wsPrint">Print / Save</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ FLOW GUIDE ═══════════════ -->
+<section id="flow">
+  <div class="container">
+    <h2>Practical Conversation Flow</h2>
+    <p class="lead">A natural coaching flow using the six types. This is not a script &mdash; listen for which type the team needs right now.</p>
+
+    <div class="flow-arrow">
+      <div class="flow-step" style="border-color:var(--cat1)"><span class="step-label">Opening</span>Clarification</div>
+      <span class="flow-divider">&rarr;</span>
+      <div class="flow-step" style="border-color:var(--cat2)"><span class="step-label">Deepening</span>Assumptions</div>
+      <span class="flow-divider">&rarr;</span>
+      <div class="flow-step" style="border-color:var(--cat3)"><span class="step-label">Grounding</span>Evidence</div>
+      <span class="flow-divider">&rarr;</span>
+      <div class="flow-step" style="border-color:var(--cat4)"><span class="step-label">Widening</span>Perspectives</div>
+      <span class="flow-divider">&rarr;</span>
+      <div class="flow-step" style="border-color:var(--cat5)"><span class="step-label">Forward</span>Implications</div>
+      <span class="flow-divider">&rarr;</span>
+      <div class="flow-step" style="border-color:var(--cat6)"><span class="step-label">Reflecting</span>Meta</div>
+    </div>
+
+    <table class="flow-table" style="margin-top:2rem">
+      <thead>
+        <tr><th>Phase</th><th>Question Type</th><th>What You're Doing</th><th>Example Moment</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Opening</td>
+          <td>Clarification</td>
+          <td>Surfacing what the team is actually thinking</td>
+          <td>"What's actually on your mind about this sprint?"</td>
+        </tr>
+        <tr>
+          <td>Deepening</td>
+          <td>Assumptions</td>
+          <td>Shaking the foundations of unexamined beliefs</td>
+          <td>"What are we taking for granted here?"</td>
+        </tr>
+        <tr>
+          <td>Grounding</td>
+          <td>Evidence</td>
+          <td>Moving from opinion to data</td>
+          <td>"What data do we have? What don't we know?"</td>
+        </tr>
+        <tr>
+          <td>Widening</td>
+          <td>Perspectives</td>
+          <td>Breaking tunnel vision, building collective intelligence</td>
+          <td>"How would [other role / user / team] see this?"</td>
+        </tr>
+        <tr>
+          <td>Forward-looking</td>
+          <td>Implications</td>
+          <td>Connecting decisions to consequences</td>
+          <td>"If we do X, then what happens?"</td>
+        </tr>
+        <tr>
+          <td>Reflecting</td>
+          <td>Meta</td>
+          <td>Building self-awareness about the thinking process</td>
+          <td>"What made this conversation useful?"</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="tip" style="margin-top:1.5rem">
+      <strong>The key skill:</strong> Not following this as a script, but <em>listening for which type of question the team needs right now.</em> If they're vague &rarr; clarify. If they're overconfident &rarr; probe assumptions. If they only see one angle &rarr; widen. If they're avoiding the real issue &rarr; go meta.
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<footer>
+  <div class="container">
+    <p>
+      Built for agile coaches who believe in the power of questions over answers.<br>
+      Inspired by Socrates, grounded in <a href="https://instituteofcoaching.org/resources/how-use-socratic-questioning-coaching" target="_blank" rel="noopener">coaching research</a>
+      and <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5806384/" target="_blank" rel="noopener">systemic team coaching</a>.
+    </p>
+  </div>
+</footer>
+
+<!-- ═══════════════ JS ═══════════════ -->
+<script>
+(function() {
+  'use strict';
+
+  // ── Card expand/collapse ──
+  document.querySelectorAll('[data-card]').forEach(card => {
+    card.querySelector('.card-header').addEventListener('click', () => {
+      const wasOpen = card.classList.contains('open');
+      // Optionally close others: document.querySelectorAll('[data-card].open').forEach(c => c.classList.remove('open'));
+      card.classList.toggle('open', !wasOpen);
+    });
+
+    card.querySelector('.card-header').addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.querySelector('.card-header').click(); }
+    });
+    card.querySelector('.card-header').setAttribute('tabindex', '0');
+    card.querySelector('.card-header').setAttribute('role', 'button');
+    card.querySelector('.card-header').setAttribute('aria-expanded', 'false');
+  });
+
+  // Update aria-expanded
+  const observer = new MutationObserver(mutations => {
+    mutations.forEach(m => {
+      if (m.attributeName === 'class') {
+        const header = m.target.querySelector('.card-header');
+        if (header) header.setAttribute('aria-expanded', m.target.classList.contains('open'));
+      }
+    });
+  });
+  document.querySelectorAll('[data-card]').forEach(card => observer.observe(card, { attributes: true }));
+
+  // ── Ceremony filter ──
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const items = document.querySelectorAll('.ceremony-item');
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filter = btn.dataset.filter;
+
+      items.forEach(item => {
+        if (filter === 'all') {
+          item.hidden = false;
+        } else {
+          item.hidden = !item.dataset.ceremonies.split(' ').includes(filter);
+        }
+      });
+    });
+  });
+
+  // ── Circular question generator ──
+  const circularQuestions = {
+    'developer': {
+      'designer': [
+        "What do you think is most frustrating for the designer when they hand off specs to the dev team?",
+        "How do you think the designer would describe what 'good collaboration' looks like between design and engineering?",
+        "If the designer could change one thing about how the team works, what do you think it would be?"
+      ],
+      'product-owner': [
+        "What do you think the Product Owner worries about most when it comes to delivery?",
+        "How do you think the PO would prioritize these items differently from how you'd prioritize them?",
+        "What do you think the PO wishes the dev team understood better?"
+      ],
+      'tester': [
+        "What do you think is the biggest challenge for QA when they receive your code?",
+        "How do you think the tester would describe the current quality of our releases?",
+        "What would the tester say we should change about our definition of done?"
+      ],
+      'scrum-master': [
+        "What do you think the Scrum Master sees as the team's biggest impediment right now?",
+        "How do you think the Scrum Master would describe our team dynamics?",
+        "What do you think the Scrum Master wishes the team would do differently in ceremonies?"
+      ],
+      'stakeholder': [
+        "How do you think our stakeholders would describe the value we've delivered this quarter?",
+        "What do you think frustrates stakeholders most about how we communicate progress?",
+        "What would a stakeholder say is the gap between what they asked for and what we built?"
+      ],
+      'team': [
+        "How do you think the rest of the team perceives the technical decisions you've been making?",
+        "What do you think the team would say is our biggest strength right now?",
+        "If the team could send you one message anonymously, what do you think it would say?"
+      ],
+      'users': [
+        "How do you think our users would describe their experience with the feature you just built?",
+        "What do you think a user cares about most that we're currently ignoring?",
+        "If a user watched us work for a day, what would surprise them?"
+      ]
+    },
+    'designer': {
+      'developer': [
+        "What do you think is most challenging for developers when implementing your designs?",
+        "How do you think the dev team would describe the handoff process?",
+        "What do you think developers wish designers understood better about technical constraints?"
+      ],
+      'product-owner': [
+        "How do you think the PO balances user needs against business goals?",
+        "What do you think the PO would say about the time we spend on design research?",
+        "What do you think frustrates the PO most about the design process?"
+      ],
+      'tester': [
+        "What do you think QA finds most difficult about testing our designs?",
+        "How do you think the tester would rate the consistency of our UI?",
+        "What would the tester say about edge cases we tend to miss in design?"
+      ],
+      'team': [
+        "How do you think the team perceives the value of design research?",
+        "What do you think the team would change about how we collaborate on design?",
+        "What do you think the team's biggest frustration is with the design process?"
+      ],
+      'users': [
+        "What do you think users struggle with most in our current interface?",
+        "How do you think our users would describe our product to a friend?",
+        "What user pain point do you think we've been overlooking?"
+      ]
+    },
+    'product-owner': {
+      'developer': [
+        "What do you think developers find most unclear about our product direction?",
+        "How do you think the dev team would prioritize the backlog differently from you?",
+        "What do you think developers need from you that they're not getting?"
+      ],
+      'designer': [
+        "How do you think the designer would describe our approach to user research?",
+        "What do you think the designer sees as the biggest UX debt in our product?",
+        "What would the designer say about how we handle design feedback?"
+      ],
+      'tester': [
+        "What do you think QA would say about the clarity of our acceptance criteria?",
+        "How do you think the tester views our quality standards?",
+        "What would QA say about the gap between what we promise and what we deliver?"
+      ],
+      'stakeholder': [
+        "What do you think our stakeholders would say is the biggest gap in our roadmap?",
+        "How do you think stakeholders perceive the team's velocity?",
+        "What would a stakeholder say if asked about their confidence in our next release?"
+      ],
+      'team': [
+        "How do you think the team feels about the current product direction?",
+        "What do you think the team would say about the clarity of our sprint goals?",
+        "What do you think the team needs from you that they haven't asked for?"
+      ],
+      'users': [
+        "What do you think is the number one thing our users would change about the product?",
+        "How do you think users perceive the pace of our improvements?",
+        "What user need do you think we're most wrong about right now?"
+      ]
+    },
+    'tester': {
+      'developer': [
+        "What do you think developers find most frustrating about the QA process?",
+        "How do you think developers would describe the quality of their own code?",
+        "What do you think devs wish QA did differently?"
+      ],
+      'designer': [
+        "What do you think the designer would say about how well we test the user experience?",
+        "How do you think the designer views the bugs we find — important or nitpicky?",
+        "What do you think the designer would prioritize in terms of quality?"
+      ],
+      'product-owner': [
+        "What do you think the PO would say about our test coverage?",
+        "How do you think the PO weighs speed vs. quality?",
+        "What do you think the PO would change about our release process?"
+      ],
+      'team': [
+        "How do you think the team perceives the value QA brings?",
+        "What do you think the team would say is the biggest quality risk right now?",
+        "What do you think the team takes for granted about testing?"
+      ],
+      'users': [
+        "What do you think users experience that our tests don't catch?",
+        "How do you think a user would describe the reliability of our product?",
+        "What user workflow do you think we're under-testing?"
+      ]
+    },
+    'scrum-master': {
+      'developer': [
+        "What do you think the developers find least valuable about our ceremonies?",
+        "How do you think the dev team would describe team morale right now?",
+        "What impediment do you think the developers haven't voiced yet?"
+      ],
+      'product-owner': [
+        "What do you think the PO would change about how we run sprint planning?",
+        "How do you think the PO feels about the team's self-organization?",
+        "What do you think the PO would say is the team's biggest process bottleneck?"
+      ],
+      'team': [
+        "How do you think the team would describe their psychological safety right now?",
+        "What do you think the team would say is the one thing holding them back?",
+        "If the team could redesign their own process from scratch, what do you think they'd change first?"
+      ],
+      'stakeholder': [
+        "What do you think stakeholders understand least about how the team works?",
+        "How do you think stakeholders would describe the team's predictability?",
+        "What do you think stakeholders wish they could change about our process?"
+      ],
+      'users': [
+        "How do you think our process affects what users ultimately experience?",
+        "What do you think users would say about our pace of delivery?",
+        "What process improvement do you think would have the biggest impact on user satisfaction?"
+      ]
+    },
+    'stakeholder': {
+      'developer': [
+        "What do you think the development team finds most challenging about your requests?",
+        "How do you think the team would describe the clarity of your requirements?",
+        "What do you think the developers would change about how priorities are communicated?"
+      ],
+      'product-owner': [
+        "How do you think the PO balances your needs against other stakeholders?",
+        "What do you think the PO would say about the feasibility of your expectations?",
+        "What do you think the PO finds most difficult about managing your requests?"
+      ],
+      'team': [
+        "How do you think the team perceives the priorities you've set?",
+        "What do you think the team would say about the stability of requirements?",
+        "What do you think the team wishes you understood about their work?"
+      ],
+      'users': [
+        "How do you think end users would react to the features you've prioritized?",
+        "What do you think users need that might conflict with business objectives?",
+        "How close do you think user needs and stakeholder goals really are?"
+      ]
+    }
+  };
+
+  const askeeSelect = document.getElementById('askee');
+  const aboutSelect = document.getElementById('about');
+  const circularOutput = document.getElementById('circularOutput');
+
+  function updateCircular() {
+    const askee = askeeSelect.value;
+    const about = aboutSelect.value;
+    const roleLabels = {
+      'developer': 'developer', 'designer': 'designer', 'product-owner': 'Product Owner',
+      'tester': 'tester', 'scrum-master': 'Scrum Master', 'stakeholder': 'stakeholder',
+      'team': 'team', 'users': 'users'
+    };
+
+    if (askee === about) {
+      circularOutput.innerHTML = '<em>Select different roles</em> to generate a circular question. The power of this technique is asking someone about a <em>different</em> person\'s perspective.';
+      return;
+    }
+
+    const questions = circularQuestions[askee] && circularQuestions[askee][about];
+    if (questions && questions.length > 0) {
+      const q = questions[Math.floor(Math.random() * questions.length)];
+      circularOutput.innerHTML =
+        '<p style="margin-bottom:0.5rem;font-size:0.8rem;color:var(--text-muted)">Ask <em>' + roleLabels[askee] + '</em> about <em>' + roleLabels[about] + '</em>:</p>' +
+        '<p style="font-size:1.05rem;font-style:italic;margin:0">"' + q + '"</p>' +
+        '<p style="font-size:0.8rem;color:var(--text-muted);margin-top:0.8rem;margin-bottom:0;cursor:pointer" onclick="updateCircular()">Click for another question &rarr;</p>';
+    } else {
+      circularOutput.innerHTML =
+        '<p style="margin-bottom:0.5rem;font-size:0.8rem;color:var(--text-muted)">Ask <em>' + roleLabels[askee] + '</em> about <em>' + roleLabels[about] + '</em>:</p>' +
+        '<p style="font-style:italic;margin:0">"How do you think <em>' + roleLabels[about] + '</em> would describe the biggest challenge in our current way of working?"</p>';
+    }
+  }
+
+  // Expose globally for the inline onclick
+  window.updateCircular = updateCircular;
+
+  askeeSelect.addEventListener('change', updateCircular);
+  aboutSelect.addEventListener('change', updateCircular);
+  updateCircular();
+
+  // ── Worksheet ──
+  const wsSteps = document.querySelectorAll('.ws-step');
+  wsSteps.forEach(step => {
+    const textarea = step.querySelector('textarea');
+    if (textarea) {
+      textarea.addEventListener('focus', () => {
+        wsSteps.forEach(s => s.classList.remove('active'));
+        step.classList.add('active');
+      });
+    }
+  });
+
+  document.getElementById('wsClear').addEventListener('click', () => {
+    if (confirm('Clear all worksheet entries?')) {
+      document.querySelectorAll('.worksheet textarea').forEach(ta => { ta.value = ''; });
+    }
+  });
+
+  document.getElementById('wsPrint').addEventListener('click', () => {
+    window.print();
+  });
+
+  // ── Smooth scroll for nav ──
+  document.querySelectorAll('nav a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+})();
+</script>
+
+</body>
+</html>
