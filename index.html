@@ -76,37 +76,38 @@
   }
   .hero blockquote cite { display: block; font-size: 0.85rem; margin-top: 0.4rem; font-style: normal; color: var(--text-muted); }
 
-  /* ── Cards (6 types) ── */
-  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; align-items: start; }
+  /* ── Cards (6 types) — vertical accordion ── */
+  .card-grid { display: flex; flex-direction: column; gap: 0.5rem; }
 
   .card {
     background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
     cursor: pointer; transition: var(--transition); overflow: hidden;
   }
-  .card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
-  .card.open { box-shadow: var(--shadow-lg); }
+  .card:hover { box-shadow: var(--shadow); }
+  .card.open { box-shadow: var(--shadow-lg); border-left: 3px solid var(--accent); }
 
   .card-header {
-    padding: 1.2rem 1.4rem; display: flex; align-items: center; gap: 0.8rem;
+    padding: 0.9rem 1.2rem; display: flex; align-items: center; gap: 0.8rem;
     user-select: none;
   }
   .card-number {
-    width: 2.2rem; height: 2.2rem; border-radius: 50%;
+    width: 2rem; height: 2rem; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    font-weight: 700; font-size: 0.85rem; color: #fff; flex-shrink: 0;
+    font-weight: 700; font-size: 0.8rem; color: #fff; flex-shrink: 0;
   }
-  .card-header h3 { margin: 0; font-size: 1rem; flex: 1; }
+  .card-header h3 { margin: 0; font-size: 0.95rem; flex: 1; }
+  .card-header .card-tagline { font-size: 0.8rem; color: var(--text-muted); font-weight: 400; margin-left: 0.3rem; }
   .card-chevron {
-    width: 20px; height: 20px; transition: transform var(--transition); flex-shrink: 0;
+    width: 18px; height: 18px; transition: transform var(--transition); flex-shrink: 0;
     color: var(--text-muted);
   }
   .card.open .card-chevron { transform: rotate(180deg); }
 
   .card-body {
     max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s ease;
-    padding: 0 1.4rem;
+    padding: 0 1.2rem;
   }
-  .card.open .card-body { max-height: 800px; padding: 0 1.4rem 1.4rem; }
+  .card.open .card-body { max-height: 800px; padding: 0 1.2rem 1.2rem; padding-left: 3.8rem; }
 
   .card-body .tag {
     display: inline-block; font-size: 0.75rem; font-weight: 600;
@@ -240,7 +241,6 @@
     h2 { font-size: 1.3rem; }
     nav { padding: 0.5rem 1rem; }
     .container { padding: 0 1rem; }
-    .card-grid { grid-template-columns: 1fr; }
     .flow-arrow { flex-direction: column; }
     .flow-divider { transform: rotate(90deg); }
   }
@@ -373,13 +373,13 @@
   .type-bar-count { width: 24px; font-weight: 600; }
 
   /* ── Scenario Guide ── */
-  .scenario-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; align-items: start; }
+  .scenario-grid { display: flex; flex-direction: column; gap: 0.5rem; }
   .scenario-card {
     background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
     overflow: hidden; transition: var(--transition); cursor: pointer;
   }
-  .scenario-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
-  .scenario-card.open { box-shadow: var(--shadow-lg); }
+  .scenario-card:hover { box-shadow: var(--shadow); }
+  .scenario-card.open { box-shadow: var(--shadow-lg); border-left: 3px solid var(--accent); }
   .scenario-header {
     padding: 1.1rem 1.3rem; display: flex; align-items: center; gap: 0.8rem; user-select: none;
   }
@@ -390,7 +390,7 @@
     max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s ease;
     padding: 0 1.3rem;
   }
-  .scenario-card.open .scenario-body { max-height: 1200px; padding: 0 1.3rem 1.3rem; }
+  .scenario-card.open .scenario-body { max-height: 2000px; padding: 0 1.3rem 1.3rem; padding-left: 3.4rem; }
   .scenario-body .sc-desc { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 0.8rem; }
   .scenario-body h5 { font-size: 0.85rem; font-weight: 600; color: var(--accent); margin-bottom: 0.4rem; margin-top: 0.8rem; }
   .scenario-body .sc-questions { padding-left: 1rem; margin-bottom: 0.5rem; }
@@ -456,7 +456,7 @@
       <div class="card cat1" data-card>
         <div class="card-header">
           <span class="card-number">1</span>
-          <h3>Conceptual Clarification</h3>
+          <h3>Conceptual Clarification <span class="card-tagline">— go deeper into what they mean</span></h3>
           <svg class="card-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"/></svg>
         </div>
         <div class="card-body">
@@ -481,7 +481,7 @@
       <div class="card cat2" data-card>
         <div class="card-header">
           <span class="card-number">2</span>
-          <h3>Probing Assumptions</h3>
+          <h3>Probing Assumptions <span class="card-tagline">— shake the bedrock</span></h3>
           <svg class="card-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"/></svg>
         </div>
         <div class="card-body">
@@ -506,7 +506,7 @@
       <div class="card cat3" data-card>
         <div class="card-header">
           <span class="card-number">3</span>
-          <h3>Probing Rationale &amp; Evidence</h3>
+          <h3>Probing Rationale &amp; Evidence <span class="card-tagline">— show me the data</span></h3>
           <svg class="card-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"/></svg>
         </div>
         <div class="card-body">
@@ -531,7 +531,7 @@
       <div class="card cat4" data-card>
         <div class="card-header">
           <span class="card-number">4</span>
-          <h3>Questioning Viewpoints &amp; Perspectives</h3>
+          <h3>Questioning Viewpoints &amp; Perspectives <span class="card-tagline">— widen the lens</span></h3>
           <svg class="card-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"/></svg>
         </div>
         <div class="card-body">
@@ -556,7 +556,7 @@
       <div class="card cat5" data-card>
         <div class="card-header">
           <span class="card-number">5</span>
-          <h3>Probing Implications &amp; Consequences</h3>
+          <h3>Probing Implications &amp; Consequences <span class="card-tagline">— then what happens?</span></h3>
           <svg class="card-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"/></svg>
         </div>
         <div class="card-body">
@@ -580,7 +580,7 @@
       <div class="card cat6" data-card>
         <div class="card-header">
           <span class="card-number">6</span>
-          <h3>Questions About the Question</h3>
+          <h3>Questions About the Question <span class="card-tagline">— go meta</span></h3>
           <svg class="card-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"/></svg>
         </div>
         <div class="card-body">
