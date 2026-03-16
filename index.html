@@ -245,9 +245,174 @@
     .flow-divider { transform: rotate(90deg); }
   }
 
+  /* ── FAB (Situation Suggester trigger) ── */
+  .fab {
+    position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 200;
+    width: 56px; height: 56px; border-radius: 50%; border: none;
+    background: var(--accent); color: #fff; font-size: 1.5rem;
+    cursor: pointer; box-shadow: var(--shadow-lg);
+    display: flex; align-items: center; justify-content: center;
+    transition: var(--transition);
+  }
+  .fab:hover { background: #7a5f40; transform: scale(1.08); }
+  .fab svg { width: 24px; height: 24px; }
+
+  /* ── Situation Panel ── */
+  .situation-overlay {
+    position: fixed; inset: 0; z-index: 300;
+    background: rgba(45,42,38,0.4); backdrop-filter: blur(4px);
+    opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
+  }
+  .situation-overlay.open { opacity: 1; pointer-events: auto; }
+  .situation-panel {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 301;
+    background: var(--surface); border-radius: 16px 16px 0 0;
+    box-shadow: 0 -4px 30px rgba(45,42,38,0.18);
+    max-height: 85vh; overflow-y: auto;
+    transform: translateY(100%); transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 1.5rem 1.5rem 2rem;
+  }
+  .situation-overlay.open .situation-panel { transform: translateY(0); }
+  .situation-panel h3 { text-align: center; margin-bottom: 0.3rem; }
+  .situation-panel .subtitle { text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.2rem; }
+  .situation-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; margin-bottom: 1.2rem; max-width: 700px; margin-left: auto; margin-right: auto; }
+  .situation-tag {
+    background: var(--accent-bg); border: 1px solid var(--border); border-radius: 20px;
+    padding: 0.45rem 1rem; font-size: 0.85rem; cursor: pointer;
+    transition: var(--transition); color: var(--text);
+  }
+  .situation-tag:hover, .situation-tag.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .situation-results {
+    max-width: 700px; margin: 0 auto; display: grid; gap: 0.7rem;
+  }
+  .situation-results:empty::after {
+    content: 'Tap a situation above to get question suggestions.';
+    text-align: center; color: var(--text-muted); font-size: 0.9rem; padding: 1rem;
+  }
+  .situation-q {
+    background: var(--bg); border-radius: 8px; padding: 0.9rem 1.1rem;
+    border-left: 3px solid var(--accent);
+  }
+  .situation-q .sq-text { font-style: italic; font-size: 0.95rem; margin-bottom: 0.3rem; }
+  .situation-q .sq-meta { font-size: 0.78rem; color: var(--text-muted); }
+  .situation-q .sq-why { font-size: 0.82rem; color: var(--accent); margin-top: 0.2rem; }
+  .situation-close {
+    position: absolute; top: 1rem; right: 1rem; background: none; border: none;
+    font-size: 1.4rem; cursor: pointer; color: var(--text-muted); line-height: 1;
+  }
+
+  /* ── Question Deck ── */
+  .deck-container { display: flex; flex-direction: column; align-items: center; gap: 1.2rem; }
+  .deck-filters { display: flex; gap: 0.4rem; flex-wrap: wrap; justify-content: center; }
+  .deck-card-wrapper {
+    width: 100%; max-width: 500px; min-height: 220px; perspective: 800px; position: relative;
+  }
+  .deck-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 2rem; text-align: center; box-shadow: var(--shadow-lg);
+    transition: transform 0.4s ease, opacity 0.4s ease;
+    min-height: 220px; display: flex; flex-direction: column; justify-content: center;
+  }
+  .deck-card.flipping { transform: rotateY(90deg); opacity: 0.5; }
+  .deck-card .dc-type {
+    font-size: 0.72rem; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.04em; margin-bottom: 0.8rem;
+  }
+  .deck-card .dc-question { font-size: 1.2rem; font-style: italic; line-height: 1.5; color: var(--text); }
+  .deck-card .dc-context { font-size: 0.82rem; color: var(--text-muted); margin-top: 0.8rem; }
+  .deck-card .dc-ceremony { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.5rem; }
+  .deck-actions { display: flex; gap: 0.8rem; align-items: center; }
+  .deck-counter { font-size: 0.82rem; color: var(--text-muted); }
+
+  /* ── Session Journal ── */
+  .journal-tabs { display: flex; gap: 0; margin-bottom: 1.5rem; border-bottom: 2px solid var(--border); }
+  .journal-tab {
+    padding: 0.6rem 1.2rem; font-size: 0.88rem; font-weight: 600;
+    cursor: pointer; border: none; background: none; color: var(--text-muted);
+    border-bottom: 2px solid transparent; margin-bottom: -2px; transition: var(--transition);
+  }
+  .journal-tab:hover { color: var(--accent); }
+  .journal-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .journal-view { display: none; }
+  .journal-view.active { display: block; }
+
+  .je-form { display: grid; gap: 1rem; }
+  .je-form label { font-weight: 600; font-size: 0.88rem; display: block; margin-bottom: 0.3rem; }
+  .je-form input, .je-form select, .je-form textarea {
+    width: 100%; padding: 0.5rem 0.7rem; border: 1px solid var(--border); border-radius: 6px;
+    font-size: 0.9rem; font-family: inherit; background: var(--bg);
+  }
+  .je-form input:focus, .je-form select:focus, .je-form textarea:focus { outline: none; border-color: var(--accent); }
+  .je-form textarea { min-height: 70px; resize: vertical; }
+  .je-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 600px) { .je-row { grid-template-columns: 1fr; } }
+
+  .je-list { display: grid; gap: 1rem; }
+  .je-entry {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 1rem 1.2rem;
+  }
+  .je-entry-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+  .je-entry-date { font-size: 0.8rem; color: var(--text-muted); }
+  .je-entry-ctx { font-size: 0.78rem; background: var(--accent-bg); color: var(--accent); padding: 0.15rem 0.5rem; border-radius: 4px; font-weight: 600; }
+  .je-entry-q { font-style: italic; font-size: 0.92rem; margin-bottom: 0.4rem; }
+  .je-entry-what { font-size: 0.88rem; color: var(--text-muted); }
+  .je-entry-actions { margin-top: 0.5rem; }
+  .je-entry-actions button { background: none; border: none; font-size: 0.78rem; color: var(--text-muted); cursor: pointer; text-decoration: underline; }
+  .je-empty { text-align: center; color: var(--text-muted); padding: 2rem; font-size: 0.92rem; }
+
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; text-align: center; }
+  .stat-card .stat-num { font-size: 1.8rem; font-weight: 700; color: var(--accent); }
+  .stat-card .stat-label { font-size: 0.78rem; color: var(--text-muted); }
+  .type-bars { display: grid; gap: 0.5rem; max-width: 400px; }
+  .type-bar-row { display: flex; align-items: center; gap: 0.6rem; font-size: 0.82rem; }
+  .type-bar-label { width: 100px; text-align: right; flex-shrink: 0; color: var(--text-muted); }
+  .type-bar-track { flex: 1; height: 18px; background: var(--bg); border-radius: 4px; overflow: hidden; }
+  .type-bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+  .type-bar-count { width: 24px; font-weight: 600; }
+
+  /* ── Roleplay ── */
+  .rp-setup { max-width: 500px; margin: 0 auto 1.5rem; }
+  .rp-api-row { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+  .rp-api-row input { flex: 1; padding: 0.5rem 0.7rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem; font-family: monospace; background: var(--bg); }
+  .rp-api-row input:focus { outline: none; border-color: var(--accent); }
+  .rp-api-status { font-size: 0.82rem; margin-bottom: 1rem; }
+  .rp-api-status.ok { color: var(--cat3); }
+  .rp-api-status.missing { color: var(--text-muted); }
+  .rp-scenarios { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 0.8rem; margin-bottom: 1.5rem; }
+  .rp-scenario {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 0.9rem 1.1rem; cursor: pointer; transition: var(--transition);
+  }
+  .rp-scenario:hover { border-color: var(--accent); box-shadow: var(--shadow); }
+  .rp-scenario.active { border-color: var(--accent); background: var(--accent-bg); }
+  .rp-scenario h4 { font-size: 0.9rem; margin-bottom: 0.2rem; }
+  .rp-scenario p { font-size: 0.8rem; color: var(--text-muted); margin: 0; }
+
+  .rp-chat-area { max-width: 660px; margin: 0 auto; }
+  .rp-chat {
+    background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
+    min-height: 300px; max-height: 450px; overflow-y: auto; padding: 1rem;
+    display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 0.8rem;
+  }
+  .rp-msg { max-width: 85%; padding: 0.7rem 1rem; border-radius: 10px; font-size: 0.92rem; line-height: 1.5; }
+  .rp-msg.coach { background: var(--accent); color: #fff; align-self: flex-end; border-bottom-right-radius: 3px; }
+  .rp-msg.coachee { background: var(--surface); border: 1px solid var(--border); align-self: flex-start; border-bottom-left-radius: 3px; }
+  .rp-msg.system { background: var(--accent-bg); align-self: center; font-size: 0.82rem; color: var(--text-muted); text-align: center; font-style: italic; }
+  .rp-input-row { display: flex; gap: 0.5rem; }
+  .rp-input-row input { flex: 1; padding: 0.6rem 0.9rem; border: 1px solid var(--border); border-radius: 8px; font-size: 0.92rem; font-family: inherit; background: var(--surface); }
+  .rp-input-row input:focus { outline: none; border-color: var(--accent); }
+  .rp-hints {
+    background: var(--accent-bg); border-radius: 8px; padding: 0.8rem 1rem;
+    font-size: 0.82rem; color: var(--text-muted); margin-top: 0.8rem;
+  }
+  .rp-hints strong { color: var(--accent); }
+  .rp-hidden { display: none; }
+
   /* ── Print ── */
   @media print {
-    nav { display: none; }
+    nav, .fab, .situation-overlay { display: none; }
     .card-body { max-height: none !important; padding: 0 1.4rem 1.4rem !important; }
     .ceremony-item[hidden] { display: block !important; }
     .worksheet textarea { border: 1px solid #ccc; }
@@ -259,11 +424,14 @@
 <!-- ═══════════════ NAV ═══════════════ -->
 <nav>
   <span class="brand">Socratic Coach</span>
-  <a href="#types">6 Question Types</a>
+  <a href="#types">6 Types</a>
+  <a href="#deck">Deck</a>
   <a href="#ceremonies">By Ceremony</a>
-  <a href="#circular">Circular Questions</a>
+  <a href="#circular">Circular</a>
+  <a href="#journal">Journal</a>
+  <a href="#roleplay">Practice</a>
   <a href="#worksheet">Worksheet</a>
-  <a href="#flow">Flow Guide</a>
+  <a href="#flow">Flow</a>
 </nav>
 
 <!-- ═══════════════ HERO ═══════════════ -->
@@ -437,6 +605,38 @@
         </div>
       </div>
 
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ QUESTION DECK ═══════════════ -->
+<section id="deck">
+  <div class="container">
+    <h2>Question Deck</h2>
+    <p class="lead">Draw a random Socratic question. Filter by type or ceremony, then tap for the next card.</p>
+    <div class="deck-container">
+      <div class="deck-filters">
+        <button class="filter-btn active" data-deck-filter="all">All</button>
+        <button class="filter-btn" data-deck-filter="1">Clarification</button>
+        <button class="filter-btn" data-deck-filter="2">Assumptions</button>
+        <button class="filter-btn" data-deck-filter="3">Evidence</button>
+        <button class="filter-btn" data-deck-filter="4">Perspectives</button>
+        <button class="filter-btn" data-deck-filter="5">Implications</button>
+        <button class="filter-btn" data-deck-filter="6">Meta</button>
+      </div>
+      <div class="deck-card-wrapper">
+        <div class="deck-card" id="deckCard">
+          <div class="dc-type" id="deckType"></div>
+          <div class="dc-question" id="deckQuestion"></div>
+          <div class="dc-context" id="deckContext"></div>
+          <div class="dc-ceremony" id="deckCeremony"></div>
+        </div>
+      </div>
+      <div class="deck-actions">
+        <button class="btn btn-secondary" id="deckShuffle">Shuffle</button>
+        <button class="btn btn-primary" id="deckNext">Next Card</button>
+        <span class="deck-counter" id="deckCounter"></span>
+      </div>
     </div>
   </div>
 </section>
@@ -658,6 +858,144 @@
   </div>
 </section>
 
+<!-- ═══════════════ SESSION JOURNAL ═══════════════ -->
+<section id="journal">
+  <div class="container">
+    <h2>Session Journal</h2>
+    <p class="lead">Track which questions you use, what happens, and see your coaching patterns grow over time.</p>
+
+    <div class="journal-tabs">
+      <button class="journal-tab active" data-jtab="new">New Entry</button>
+      <button class="journal-tab" data-jtab="entries">Past Entries</button>
+      <button class="journal-tab" data-jtab="stats">Stats</button>
+    </div>
+
+    <!-- New Entry -->
+    <div class="journal-view active" id="jvNew">
+      <div class="je-form">
+        <div class="je-row">
+          <div><label for="jeDate">Date</label><input type="date" id="jeDate"></div>
+          <div>
+            <label for="jeContext">Context</label>
+            <select id="jeContext">
+              <option value="">Select...</option>
+              <option value="Sprint Planning">Sprint Planning</option>
+              <option value="Refinement">Refinement</option>
+              <option value="Sprint Review">Sprint Review</option>
+              <option value="Retrospective">Retrospective</option>
+              <option value="Daily Standup">Daily Standup</option>
+              <option value="1-on-1 Coaching">1-on-1 Coaching</option>
+              <option value="Ad-hoc">Ad-hoc conversation</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label for="jeSituation">Situation</label>
+          <input type="text" id="jeSituation" placeholder="e.g., Team was avoiding a decision about architecture...">
+        </div>
+        <div>
+          <label for="jeQuestion">Question(s) I used</label>
+          <textarea id="jeQuestion" placeholder="What question did you ask? Which type was it?"></textarea>
+        </div>
+        <div>
+          <label for="jeOutcome">What happened</label>
+          <textarea id="jeOutcome" placeholder="How did the team/person respond? What shifted?"></textarea>
+        </div>
+        <div>
+          <label for="jeReflection">Reflection</label>
+          <textarea id="jeReflection" placeholder="What would I do differently? What worked well?"></textarea>
+        </div>
+        <div>
+          <label>Question type used</label>
+          <div class="deck-filters" style="justify-content:flex-start">
+            <button class="filter-btn" data-jtype="1">Clarification</button>
+            <button class="filter-btn" data-jtype="2">Assumptions</button>
+            <button class="filter-btn" data-jtype="3">Evidence</button>
+            <button class="filter-btn" data-jtype="4">Perspectives</button>
+            <button class="filter-btn" data-jtype="5">Implications</button>
+            <button class="filter-btn" data-jtype="6">Meta</button>
+          </div>
+        </div>
+        <div>
+          <button class="btn btn-primary" id="jeSave">Save Entry</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Past Entries -->
+    <div class="journal-view" id="jvEntries">
+      <div class="je-list" id="jeList"></div>
+    </div>
+
+    <!-- Stats -->
+    <div class="journal-view" id="jvStats">
+      <div class="stats-grid" id="statsGrid"></div>
+      <h3>Question Types Used</h3>
+      <div class="type-bars" id="typeBars"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ ROLEPLAY / PRACTICE ═══════════════ -->
+<section id="roleplay">
+  <div class="container">
+    <h2>Practice Mode</h2>
+    <p class="lead">Practice your Socratic questioning with an AI-powered coachee. Pick a scenario and try different question types.</p>
+
+    <div class="rp-setup">
+      <label style="font-weight:600;font-size:0.88rem;display:block;margin-bottom:0.3rem;">Claude API Key</label>
+      <div class="rp-api-row">
+        <input type="password" id="rpApiKey" placeholder="sk-ant-...">
+        <button class="btn btn-primary" id="rpSaveKey">Save</button>
+      </div>
+      <div class="rp-api-status missing" id="rpApiStatus">No API key set. Your key is stored only in this browser.</div>
+    </div>
+
+    <h3>Choose a scenario</h3>
+    <div class="rp-scenarios" id="rpScenarios">
+      <div class="rp-scenario" data-scenario="defensive-dev">
+        <h4>Defensive Developer</h4>
+        <p>A developer pushes back on code review feedback, taking it personally.</p>
+      </div>
+      <div class="rp-scenario" data-scenario="scope-creep">
+        <h4>Sprint Scope Argument</h4>
+        <p>The team argues about taking on too much work in the sprint.</p>
+      </div>
+      <div class="rp-scenario" data-scenario="unrealistic-deadline">
+        <h4>Unrealistic Deadline</h4>
+        <p>The Product Owner pushes a deadline the team thinks is impossible.</p>
+      </div>
+      <div class="rp-scenario" data-scenario="quiet-member">
+        <h4>Quiet Team Member</h4>
+        <p>A team member has disengaged and barely speaks in retros.</p>
+      </div>
+      <div class="rp-scenario" data-scenario="arch-conflict">
+        <h4>Architecture Conflict</h4>
+        <p>Two developers disagree strongly about a technical approach.</p>
+      </div>
+      <div class="rp-scenario" data-scenario="wrong-feature">
+        <h4>Stakeholder vs. Team</h4>
+        <p>A stakeholder demands a feature the team believes is wrong for users.</p>
+      </div>
+    </div>
+
+    <div class="rp-chat-area rp-hidden" id="rpChatArea">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.8rem;">
+        <h3 id="rpScenarioTitle" style="margin:0"></h3>
+        <button class="btn btn-secondary" id="rpEnd" style="font-size:0.8rem;padding:0.3rem 0.8rem;">End Session</button>
+      </div>
+      <div class="rp-chat" id="rpChat"></div>
+      <div class="rp-input-row">
+        <input type="text" id="rpInput" placeholder="Type your coaching question or response..." disabled>
+        <button class="btn btn-primary" id="rpSend" disabled>Send</button>
+      </div>
+      <div class="rp-hints" id="rpHints">
+        <strong>Coaching hints:</strong> Choose a scenario above to begin practicing.
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ═══════════════ WORKSHEET ═══════════════ -->
 <section id="worksheet">
   <div class="container">
@@ -793,6 +1131,21 @@
   </div>
 </section>
 
+<!-- ═══════════════ SITUATION SUGGESTER (FAB + Panel) ═══════════════ -->
+<button class="fab" id="fabBtn" aria-label="What's happening right now?">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+</button>
+
+<div class="situation-overlay" id="sitOverlay">
+  <div class="situation-panel">
+    <button class="situation-close" id="sitClose">&times;</button>
+    <h3>What's happening right now?</h3>
+    <p class="subtitle">Tap a situation to get tailored question suggestions.</p>
+    <div class="situation-tags" id="sitTags"></div>
+    <div class="situation-results" id="sitResults"></div>
+  </div>
+</div>
+
 <!-- ═══════════════ FOOTER ═══════════════ -->
 <footer>
   <div class="container">
@@ -809,291 +1162,527 @@
 (function() {
   'use strict';
 
-  // ── Card expand/collapse ──
+  /* ════════════════════════════════════════════
+     SHARED QUESTION BANK
+     ════════════════════════════════════════════ */
+  const typeNames = { 1:'Clarification', 2:'Assumptions', 3:'Evidence', 4:'Perspectives', 5:'Implications', 6:'Meta' };
+  const typeCSSVars = { 1:'--cat1', 2:'--cat2', 3:'--cat3', 4:'--cat4', 5:'--cat5', 6:'--cat6' };
+
+  const questionBank = [
+    // Type 1: Clarification
+    {t:1, q:"When you say 'done,' what does that look like specifically?", ctx:"Vague acceptance criteria", cer:"planning refinement"},
+    {t:1, q:"What do we already know about this? What don't we know yet?", ctx:"Opening a refinement discussion", cer:"refinement"},
+    {t:1, q:"Are you saying we should stop doing X, or change how we do X?", ctx:"Ambiguous proposals", cer:"retro planning"},
+    {t:1, q:"Can you give me an example of what you mean?", ctx:"Abstract statements", cer:"planning refinement one-on-one"},
+    {t:1, q:"How does this relate to what we discussed last sprint?", ctx:"Connecting threads", cer:"planning retro"},
+    {t:1, q:"Can you rephrase that so the whole team has the same picture?", ctx:"Misalignment in language", cer:"planning refinement daily"},
+    {t:1, q:"What exactly does 'done' mean for this story? Can we be more specific?", ctx:"Story refinement", cer:"planning refinement"},
+    {t:1, q:"When you say 'communication was bad,' what specifically happened?", ctx:"Vague retro feedback", cer:"retro"},
+    {t:1, q:"What does 'blocked' mean here — what exactly do you need to move forward?", ctx:"Unspecified blockers", cer:"daily"},
+    {t:1, q:"What's on your mind?", ctx:"The kickstart question — open and focusing", cer:"one-on-one"},
+    {t:1, q:"What exactly do you mean by that?", ctx:"General clarification", cer:"planning refinement retro daily one-on-one"},
+    {t:1, q:"How would you explain this to someone outside the team?", ctx:"Testing shared understanding", cer:"refinement review"},
+    // Type 2: Assumptions
+    {t:2, q:"What are we assuming about how users will react to this?", ctx:"Before committing to scope", cer:"planning refinement"},
+    {t:2, q:"We seem to be assuming the API will be stable — how can we verify that?", ctx:"Technical assumptions", cer:"planning refinement"},
+    {t:2, q:"What if the opposite were true?", ctx:"Breaking fixed thinking", cer:"planning retro one-on-one"},
+    {t:2, q:"What would happen if we didn't build this feature at all?", ctx:"Challenge default prioritization", cer:"planning refinement"},
+    {t:2, q:"How did we choose those assumptions?", ctx:"Unexamined foundations", cer:"planning refinement review"},
+    {t:2, q:"And what else?", ctx:"The AWE question — first answer is rarely the best", cer:"planning refinement retro one-on-one"},
+    {t:2, q:"What assumptions are we making about user behavior in this story?", ctx:"Pre-sprint commitment", cer:"planning"},
+    {t:2, q:"Which of our original assumptions about this feature turned out to be wrong?", ctx:"After demoing completed work", cer:"review"},
+    {t:2, q:"We seem to be assuming this will fix itself — what if it doesn't?", ctx:"Avoiding a recurring issue", cer:"retro"},
+    {t:2, q:"You seem to be assuming that... — is that true?", ctx:"Gently naming a hidden belief", cer:"one-on-one"},
+    {t:2, q:"Is someone else's opinion overly influencing your own?", ctx:"Deference to authority", cer:"one-on-one"},
+    {t:2, q:"What else could we assume instead?", ctx:"Opening alternative perspectives", cer:"planning refinement retro"},
+    // Type 3: Evidence
+    {t:3, q:"What data do we have that supports this priority?", ctx:"Priority decisions", cer:"planning refinement review"},
+    {t:3, q:"How might we experiment to validate this before committing a full sprint?", ctx:"Unvalidated hypotheses", cer:"refinement planning"},
+    {t:3, q:"Is this based on what users told us, or what we think they need?", ctx:"Opinion vs. research", cer:"planning refinement review"},
+    {t:3, q:"Would that reasoning stand up if we presented it to stakeholders?", ctx:"Testing robustness", cer:"planning review"},
+    {t:3, q:"How do you know this? Show me.", ctx:"Direct evidence request", cer:"planning refinement retro"},
+    {t:3, q:"What evidence is there to support what you are saying?", ctx:"General evidence probe", cer:"planning refinement retro one-on-one"},
+    {t:3, q:"What data do we have that supports sizing this as an 8?", ctx:"Estimation as guesswork", cer:"planning"},
+    {t:3, q:"What did we learn from users this sprint? What surprised us?", ctx:"Opening review with learning", cer:"review"},
+    {t:3, q:"What will happen if we don't tackle this technical debt now?", ctx:"Tech debt evaluation", cer:"retro"},
+    {t:3, q:"Am I basing this on feelings rather than facts?", ctx:"Emotional reasoning check", cer:"one-on-one"},
+    {t:3, q:"What's the strongest argument against our current approach?", ctx:"Steel-manning the alternative", cer:"planning refinement review"},
+    // Type 4: Perspectives
+    {t:4, q:"How would our end user describe this problem?", ctx:"User-centricity", cer:"refinement planning review"},
+    {t:4, q:"What would the ops team say about this architectural choice?", ctx:"Cross-team impact", cer:"planning refinement"},
+    {t:4, q:"Who benefits from keeping things the way they are?", ctx:"Resistance to change", cer:"retro one-on-one"},
+    {t:4, q:"If we asked the stakeholder what success looks like, would they say the same thing?", ctx:"Alignment check", cer:"review planning"},
+    {t:4, q:"What alternative ways of looking at this are there?", ctx:"Breaking tunnel vision", cer:"planning refinement retro one-on-one"},
+    {t:4, q:"How could you look at this another way?", ctx:"Widening perspective", cer:"retro one-on-one"},
+    {t:4, q:"How would our end user describe this problem in their own words?", ctx:"User voice in technical discussion", cer:"refinement"},
+    {t:4, q:"How do you think the rest of the team experienced that situation?", ctx:"Different interpretations", cer:"retro"},
+    {t:4, q:"Who else on the team might be affected by this? Who could help?", ctx:"Encouraging collaboration", cer:"daily"},
+    {t:4, q:"How might your colleague see this same situation differently?", ctx:"Building empathy", cer:"one-on-one"},
+    {t:4, q:"What would a new team member think if they saw this for the first time?", ctx:"Fresh eyes perspective", cer:"retro refinement"},
+    // Type 5: Implications
+    {t:5, q:"If we don't address this tech debt now, what will the next three sprints look like?", ctx:"Technical debt consequences", cer:"retro planning"},
+    {t:5, q:"What are the consequences of that assumption for our users?", ctx:"User impact of decisions", cer:"planning refinement review"},
+    {t:5, q:"If this works, what does it make possible? If it doesn't, what have we learned?", ctx:"Framing experiments", cer:"planning review"},
+    {t:5, q:"How does this decision affect the other teams who depend on us?", ctx:"Systemic thinking", cer:"planning review retro"},
+    {t:5, q:"Why is this important? What is the best outcome, and why?", ctx:"Purpose and priority", cer:"planning refinement"},
+    {t:5, q:"If we take on this much work, what are the consequences for quality?", ctx:"Over-commitment", cer:"planning"},
+    {t:5, q:"Based on what we've learned, what should we do differently next sprint?", ctx:"Turning insights into action", cer:"review"},
+    {t:5, q:"If we implement this improvement, what ripple effects might it have?", ctx:"Consequences of changes", cer:"retro"},
+    {t:5, q:"If this blocker stays unresolved today, what's the impact on the sprint goal?", ctx:"Making inaction cost visible", cer:"daily"},
+    {t:5, q:"If you keep believing this, what happens? And if you let it go?", ctx:"Connecting thought to future action", cer:"one-on-one"},
+    {t:5, q:"What's the worst that could happen? And how likely is that really?", ctx:"Risk calibration", cer:"planning one-on-one"},
+    // Type 6: Meta
+    {t:6, q:"What's the real challenge here for you as a team?", ctx:"The focus question", cer:"retro one-on-one"},
+    {t:6, q:"I notice we've been discussing this for 20 minutes — what's making this decision hard?", ctx:"Discussion going in circles", cer:"planning retro refinement"},
+    {t:6, q:"Why do you think I'm asking you this instead of giving you the answer?", ctx:"Building coaching awareness", cer:"one-on-one"},
+    {t:6, q:"Is this the right question to be asking right now, or is there a deeper one?", ctx:"Redirecting focus", cer:"retro planning one-on-one"},
+    {t:6, q:"What was the point of asking that question?", ctx:"Reflecting on the inquiry itself", cer:"one-on-one"},
+    {t:6, q:"I notice we keep discussing this same topic — what's making it hard to resolve?", ctx:"Retro stuck in a loop", cer:"retro"},
+    {t:6, q:"What's the real challenge here for you?", ctx:"Cuts through surface-level topics", cer:"one-on-one"},
+    {t:6, q:"What made this conversation useful?", ctx:"Closing reflection", cer:"retro review one-on-one"},
+    {t:6, q:"Are we solving the right problem?", ctx:"Step back from the weeds", cer:"planning refinement retro"},
+  ];
+
+  /* ════════════════════════════════════════════
+     SITUATION SUGGESTER DATA
+     ════════════════════════════════════════════ */
+  const situations = [
+    { id:'loudest-voice', label:'Loudest voice dominating', questions:[
+      {q:"What do the rest of you think about this?", t:4, why:"Redirects to quieter voices"},
+      {q:"How might someone with a different perspective see this?", t:4, why:"Opens the floor without singling anyone out"},
+      {q:"I'd like to hear from everyone — what's one word that captures your view?", t:1, why:"Structured round-robin breaks dominance"},
+      {q:"What's making it hard for us to hear all viewpoints right now?", t:6, why:"Meta-awareness of the dynamic"},
+    ]},
+    { id:'avoiding-decision', label:'Team avoiding a decision', questions:[
+      {q:"What's making this decision hard?", t:6, why:"Names the avoidance without blame"},
+      {q:"What would happen if we made no decision today?", t:5, why:"Makes cost of inaction visible"},
+      {q:"What information are we missing that would make this easier?", t:3, why:"Identifies what's blocking commitment"},
+      {q:"What's the smallest decision we could make right now to move forward?", t:1, why:"Breaks paralysis into steps"},
+    ]},
+    { id:'defensive', label:'Someone is defensive', questions:[
+      {q:"Help me understand your perspective — what matters most to you here?", t:1, why:"Validates their position before probing"},
+      {q:"What would need to be true for this feedback to be useful?", t:2, why:"Reframes from threat to hypothesis"},
+      {q:"How would you approach this if you were giving advice to a friend?", t:4, why:"Creates distance from emotional reaction"},
+      {q:"What's the real concern underneath this?", t:6, why:"Goes deeper than the surface defensiveness"},
+    ]},
+    { id:'circles', label:'Conversation going in circles', questions:[
+      {q:"I notice we've come back to this point several times — what's the underlying issue?", t:6, why:"Breaks the loop with meta-observation"},
+      {q:"What would we need to agree on first before we can resolve this?", t:1, why:"Identifies the hidden prerequisite"},
+      {q:"Are we solving the right problem?", t:6, why:"Challenges the premise entirely"},
+      {q:"What if we parked this and asked: what do we actually know for certain?", t:3, why:"Resets to evidence"},
+    ]},
+    { id:'silent', label:'Nobody is speaking up', questions:[
+      {q:"What's on your mind that you haven't said yet?", t:1, why:"Direct invitation with psychological safety"},
+      {q:"On a scale of 1-5, how confident are we in this direction? (show of hands)", t:3, why:"Low-stakes way to break silence"},
+      {q:"If there were no consequences, what would you change about this?", t:2, why:"Removes fear of judgment"},
+      {q:"What question should we be asking right now that we're not?", t:6, why:"Gives them a safe meta-entry point"},
+    ]},
+    { id:'blaming', label:'Blaming / finger-pointing', questions:[
+      {q:"What systemic factors contributed to this?", t:4, why:"Shifts from person to system"},
+      {q:"How did we as a team end up here?", t:3, why:"Distributes ownership"},
+      {q:"What would we need to change so this doesn't happen again, regardless of who's involved?", t:5, why:"Forward-looking, not backward-blaming"},
+      {q:"What assumptions did we all share that led to this outcome?", t:2, why:"Finds collective responsibility"},
+    ]},
+    { id:'overcommit', label:'Over-committing', questions:[
+      {q:"If we take on this much, what are the consequences for quality?", t:5, why:"Makes the trade-off explicit"},
+      {q:"What happened last time we committed to this much?", t:3, why:"Evidence from recent history"},
+      {q:"What would we cut if we had to reduce this by 30%?", t:2, why:"Forces prioritization"},
+      {q:"What are we assuming about our capacity that we haven't verified?", t:2, why:"Challenges optimism bias"},
+    ]},
+    { id:'vague-agreement', label:'Vague agreement without depth', questions:[
+      {q:"I want to make sure we're aligned — can each person say what they think we just decided?", t:1, why:"Surfaces hidden disagreement"},
+      {q:"What specifically would need to happen for this to work?", t:1, why:"Forces concrete details"},
+      {q:"What could go wrong with this approach?", t:5, why:"Stress-tests the agreement"},
+      {q:"Who disagrees even a little? What's your hesitation?", t:4, why:"Gives permission to dissent"},
+    ]},
+    { id:'conflict', label:'Conflict between two people', questions:[
+      {q:"What do you think [other person] is most concerned about here?", t:4, why:"Circular question — builds empathy"},
+      {q:"What do you both agree on?", t:1, why:"Finds common ground first"},
+      {q:"What would a good outcome look like for both of you?", t:5, why:"Shifts from positions to interests"},
+      {q:"What's the real challenge underneath this disagreement?", t:6, why:"Goes below surface conflict"},
+    ]},
+    { id:'low-energy', label:'Energy is low / disengaged', questions:[
+      {q:"What would make this conversation more useful for you?", t:6, why:"Gives them agency over the format"},
+      {q:"What's one thing that energized you this sprint?", t:1, why:"Starts from positive energy"},
+      {q:"What would need to change for us to leave this meeting feeling it was worth it?", t:5, why:"Sets a practical bar"},
+      {q:"What's the elephant in the room that we're not talking about?", t:6, why:"Often low energy masks an unaddressed issue"},
+    ]},
+  ];
+
+  /* ════════════════════════════════════════════
+     CARD EXPAND/COLLAPSE (6 types)
+     ════════════════════════════════════════════ */
   document.querySelectorAll('[data-card]').forEach(card => {
-    card.querySelector('.card-header').addEventListener('click', () => {
-      const wasOpen = card.classList.contains('open');
-      // Optionally close others: document.querySelectorAll('[data-card].open').forEach(c => c.classList.remove('open'));
-      card.classList.toggle('open', !wasOpen);
-    });
-
-    card.querySelector('.card-header').addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.querySelector('.card-header').click(); }
-    });
-    card.querySelector('.card-header').setAttribute('tabindex', '0');
-    card.querySelector('.card-header').setAttribute('role', 'button');
-    card.querySelector('.card-header').setAttribute('aria-expanded', 'false');
+    const hdr = card.querySelector('.card-header');
+    hdr.addEventListener('click', () => card.classList.toggle('open'));
+    hdr.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); hdr.click(); } });
+    hdr.setAttribute('tabindex', '0');
+    hdr.setAttribute('role', 'button');
+    hdr.setAttribute('aria-expanded', 'false');
   });
+  const obs = new MutationObserver(muts => muts.forEach(m => {
+    if (m.attributeName === 'class') {
+      const h = m.target.querySelector('.card-header');
+      if (h) h.setAttribute('aria-expanded', m.target.classList.contains('open'));
+    }
+  }));
+  document.querySelectorAll('[data-card]').forEach(c => obs.observe(c, { attributes: true }));
 
-  // Update aria-expanded
-  const observer = new MutationObserver(mutations => {
-    mutations.forEach(m => {
-      if (m.attributeName === 'class') {
-        const header = m.target.querySelector('.card-header');
-        if (header) header.setAttribute('aria-expanded', m.target.classList.contains('open'));
-      }
-    });
-  });
-  document.querySelectorAll('[data-card]').forEach(card => observer.observe(card, { attributes: true }));
-
-  // ── Ceremony filter ──
-  const filterBtns = document.querySelectorAll('.filter-btn');
-  const items = document.querySelectorAll('.ceremony-item');
-
+  /* ════════════════════════════════════════════
+     CEREMONY FILTER
+     ════════════════════════════════════════════ */
+  const filterBtns = document.querySelectorAll('#ceremonies .filter-btn');
+  const cerItems = document.querySelectorAll('.ceremony-item');
   filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       filterBtns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      const filter = btn.dataset.filter;
-
-      items.forEach(item => {
-        if (filter === 'all') {
-          item.hidden = false;
-        } else {
-          item.hidden = !item.dataset.ceremonies.split(' ').includes(filter);
-        }
-      });
+      const f = btn.dataset.filter;
+      cerItems.forEach(item => { item.hidden = f !== 'all' && !item.dataset.ceremonies.split(' ').includes(f); });
     });
   });
 
-  // ── Circular question generator ──
-  const circularQuestions = {
-    'developer': {
-      'designer': [
-        "What do you think is most frustrating for the designer when they hand off specs to the dev team?",
-        "How do you think the designer would describe what 'good collaboration' looks like between design and engineering?",
-        "If the designer could change one thing about how the team works, what do you think it would be?"
-      ],
-      'product-owner': [
-        "What do you think the Product Owner worries about most when it comes to delivery?",
-        "How do you think the PO would prioritize these items differently from how you'd prioritize them?",
-        "What do you think the PO wishes the dev team understood better?"
-      ],
-      'tester': [
-        "What do you think is the biggest challenge for QA when they receive your code?",
-        "How do you think the tester would describe the current quality of our releases?",
-        "What would the tester say we should change about our definition of done?"
-      ],
-      'scrum-master': [
-        "What do you think the Scrum Master sees as the team's biggest impediment right now?",
-        "How do you think the Scrum Master would describe our team dynamics?",
-        "What do you think the Scrum Master wishes the team would do differently in ceremonies?"
-      ],
-      'stakeholder': [
-        "How do you think our stakeholders would describe the value we've delivered this quarter?",
-        "What do you think frustrates stakeholders most about how we communicate progress?",
-        "What would a stakeholder say is the gap between what they asked for and what we built?"
-      ],
-      'team': [
-        "How do you think the rest of the team perceives the technical decisions you've been making?",
-        "What do you think the team would say is our biggest strength right now?",
-        "If the team could send you one message anonymously, what do you think it would say?"
-      ],
-      'users': [
-        "How do you think our users would describe their experience with the feature you just built?",
-        "What do you think a user cares about most that we're currently ignoring?",
-        "If a user watched us work for a day, what would surprise them?"
-      ]
-    },
-    'designer': {
-      'developer': [
-        "What do you think is most challenging for developers when implementing your designs?",
-        "How do you think the dev team would describe the handoff process?",
-        "What do you think developers wish designers understood better about technical constraints?"
-      ],
-      'product-owner': [
-        "How do you think the PO balances user needs against business goals?",
-        "What do you think the PO would say about the time we spend on design research?",
-        "What do you think frustrates the PO most about the design process?"
-      ],
-      'tester': [
-        "What do you think QA finds most difficult about testing our designs?",
-        "How do you think the tester would rate the consistency of our UI?",
-        "What would the tester say about edge cases we tend to miss in design?"
-      ],
-      'team': [
-        "How do you think the team perceives the value of design research?",
-        "What do you think the team would change about how we collaborate on design?",
-        "What do you think the team's biggest frustration is with the design process?"
-      ],
-      'users': [
-        "What do you think users struggle with most in our current interface?",
-        "How do you think our users would describe our product to a friend?",
-        "What user pain point do you think we've been overlooking?"
-      ]
-    },
-    'product-owner': {
-      'developer': [
-        "What do you think developers find most unclear about our product direction?",
-        "How do you think the dev team would prioritize the backlog differently from you?",
-        "What do you think developers need from you that they're not getting?"
-      ],
-      'designer': [
-        "How do you think the designer would describe our approach to user research?",
-        "What do you think the designer sees as the biggest UX debt in our product?",
-        "What would the designer say about how we handle design feedback?"
-      ],
-      'tester': [
-        "What do you think QA would say about the clarity of our acceptance criteria?",
-        "How do you think the tester views our quality standards?",
-        "What would QA say about the gap between what we promise and what we deliver?"
-      ],
-      'stakeholder': [
-        "What do you think our stakeholders would say is the biggest gap in our roadmap?",
-        "How do you think stakeholders perceive the team's velocity?",
-        "What would a stakeholder say if asked about their confidence in our next release?"
-      ],
-      'team': [
-        "How do you think the team feels about the current product direction?",
-        "What do you think the team would say about the clarity of our sprint goals?",
-        "What do you think the team needs from you that they haven't asked for?"
-      ],
-      'users': [
-        "What do you think is the number one thing our users would change about the product?",
-        "How do you think users perceive the pace of our improvements?",
-        "What user need do you think we're most wrong about right now?"
-      ]
-    },
-    'tester': {
-      'developer': [
-        "What do you think developers find most frustrating about the QA process?",
-        "How do you think developers would describe the quality of their own code?",
-        "What do you think devs wish QA did differently?"
-      ],
-      'designer': [
-        "What do you think the designer would say about how well we test the user experience?",
-        "How do you think the designer views the bugs we find — important or nitpicky?",
-        "What do you think the designer would prioritize in terms of quality?"
-      ],
-      'product-owner': [
-        "What do you think the PO would say about our test coverage?",
-        "How do you think the PO weighs speed vs. quality?",
-        "What do you think the PO would change about our release process?"
-      ],
-      'team': [
-        "How do you think the team perceives the value QA brings?",
-        "What do you think the team would say is the biggest quality risk right now?",
-        "What do you think the team takes for granted about testing?"
-      ],
-      'users': [
-        "What do you think users experience that our tests don't catch?",
-        "How do you think a user would describe the reliability of our product?",
-        "What user workflow do you think we're under-testing?"
-      ]
-    },
-    'scrum-master': {
-      'developer': [
-        "What do you think the developers find least valuable about our ceremonies?",
-        "How do you think the dev team would describe team morale right now?",
-        "What impediment do you think the developers haven't voiced yet?"
-      ],
-      'product-owner': [
-        "What do you think the PO would change about how we run sprint planning?",
-        "How do you think the PO feels about the team's self-organization?",
-        "What do you think the PO would say is the team's biggest process bottleneck?"
-      ],
-      'team': [
-        "How do you think the team would describe their psychological safety right now?",
-        "What do you think the team would say is the one thing holding them back?",
-        "If the team could redesign their own process from scratch, what do you think they'd change first?"
-      ],
-      'stakeholder': [
-        "What do you think stakeholders understand least about how the team works?",
-        "How do you think stakeholders would describe the team's predictability?",
-        "What do you think stakeholders wish they could change about our process?"
-      ],
-      'users': [
-        "How do you think our process affects what users ultimately experience?",
-        "What do you think users would say about our pace of delivery?",
-        "What process improvement do you think would have the biggest impact on user satisfaction?"
-      ]
-    },
-    'stakeholder': {
-      'developer': [
-        "What do you think the development team finds most challenging about your requests?",
-        "How do you think the team would describe the clarity of your requirements?",
-        "What do you think the developers would change about how priorities are communicated?"
-      ],
-      'product-owner': [
-        "How do you think the PO balances your needs against other stakeholders?",
-        "What do you think the PO would say about the feasibility of your expectations?",
-        "What do you think the PO finds most difficult about managing your requests?"
-      ],
-      'team': [
-        "How do you think the team perceives the priorities you've set?",
-        "What do you think the team would say about the stability of requirements?",
-        "What do you think the team wishes you understood about their work?"
-      ],
-      'users': [
-        "How do you think end users would react to the features you've prioritized?",
-        "What do you think users need that might conflict with business objectives?",
-        "How close do you think user needs and stakeholder goals really are?"
-      ]
-    }
+  /* ════════════════════════════════════════════
+     CIRCULAR QUESTION GENERATOR (compact data)
+     ════════════════════════════════════════════ */
+  const CQ = {
+    developer:{'designer':["What do you think frustrates the designer most about handoffs?","How would the designer describe good dev-design collaboration?","If the designer could change one thing about our workflow, what would it be?"],'product-owner':["What do you think the PO worries about most re: delivery?","How would the PO prioritize differently from you?","What does the PO wish the dev team understood better?"],'tester':["What's the biggest challenge for QA when they receive your code?","How would QA describe our release quality?","What would QA change about our definition of done?"],'scrum-master':["What's the SM's biggest concern about the team right now?","How would the SM describe our dynamics?","What does the SM wish we did differently in ceremonies?"],'stakeholder':["How would stakeholders describe the value we delivered this quarter?","What frustrates stakeholders about our progress communication?","What gap do stakeholders see between ask and delivery?"],'team':["How does the team perceive your recent technical decisions?","What would the team say is our biggest strength?","If the team sent you one anonymous message, what would it say?"],'users':["How would users describe the feature you just built?","What do users care about that we're ignoring?","If a user watched us work for a day, what would surprise them?"]},
+    designer:{'developer':["What's hardest for devs when implementing your designs?","How would devs describe the handoff process?","What do devs wish designers understood about technical constraints?"],'product-owner':["How does the PO balance user needs vs business goals?","What would the PO say about time spent on design research?","What frustrates the PO about the design process?"],'tester':["What's hardest for QA about testing our designs?","How would QA rate our UI consistency?","What edge cases does QA think we miss in design?"],'team':["How does the team perceive the value of design research?","What would the team change about design collaboration?","What frustrates the team most about the design process?"],'users':["What do users struggle with most in our interface?","How would users describe our product to a friend?","What user pain are we overlooking?"]},
+    'product-owner':{'developer':["What do devs find most unclear about our product direction?","How would devs prioritize differently from you?","What do devs need from you that they're not getting?"],'designer':["How would the designer describe our user research approach?","What UX debt does the designer see as biggest?","What would the designer say about how we handle design feedback?"],'tester':["What would QA say about our acceptance criteria clarity?","How does QA view our quality standards?","What gap does QA see between promises and delivery?"],'stakeholder':["What do stakeholders see as the biggest roadmap gap?","How do stakeholders perceive our velocity?","How confident are stakeholders in our next release?"],'team':["How does the team feel about our product direction?","What would the team say about sprint goal clarity?","What does the team need from you that they haven't asked for?"],'users':["What would users change first about our product?","How do users perceive our pace of improvement?","What user need are we most wrong about?"]},
+    tester:{'developer':["What frustrates devs about the QA process?","How would devs rate their own code quality?","What do devs wish QA did differently?"],'designer':["What would the designer say about how well we test UX?","Does the designer see our bugs as important or nitpicky?","What quality priorities does the designer have?"],'product-owner':["What would the PO say about our test coverage?","How does the PO weigh speed vs quality?","What would the PO change about releases?"],'team':["How does the team perceive QA's value?","What's the biggest quality risk according to the team?","What does the team take for granted about testing?"],'users':["What do users experience that our tests miss?","How would users rate our reliability?","What workflows are we under-testing?"]},
+    'scrum-master':{'developer':["What ceremonies do devs find least valuable?","How would devs describe team morale?","What impediment haven't devs voiced yet?"],'product-owner':["What would the PO change about sprint planning?","How does the PO feel about our self-organization?","What process bottleneck does the PO see?"],'team':["How would the team describe psychological safety right now?","What's the one thing holding the team back?","If the team redesigned their process, what changes first?"],'stakeholder':["What do stakeholders understand least about how we work?","How would stakeholders rate our predictability?","What would stakeholders change about our process?"],'users':["How does our process affect user experience?","What would users say about our delivery pace?","What process change would most improve user satisfaction?"]},
+    stakeholder:{'developer':["What's most challenging about your requests for the dev team?","How would the team describe your requirements clarity?","What would devs change about priority communication?"],'product-owner':["How does the PO balance your needs vs others?","What would the PO say about feasibility of your expectations?","What's hardest for the PO about managing your requests?"],'team':["How does the team perceive the priorities you've set?","What would the team say about requirement stability?","What does the team wish you understood about their work?"],'users':["How would users react to the features you've prioritized?","What user needs might conflict with business goals?","How aligned are user needs and stakeholder goals really?"]}
   };
-
-  const askeeSelect = document.getElementById('askee');
-  const aboutSelect = document.getElementById('about');
-  const circularOutput = document.getElementById('circularOutput');
-
+  const roleLabels = {'developer':'developer','designer':'designer','product-owner':'Product Owner','tester':'tester','scrum-master':'Scrum Master','stakeholder':'stakeholder','team':'team','users':'users'};
+  const askeeEl = document.getElementById('askee'), aboutEl = document.getElementById('about'), circOut = document.getElementById('circularOutput');
   function updateCircular() {
-    const askee = askeeSelect.value;
-    const about = aboutSelect.value;
-    const roleLabels = {
-      'developer': 'developer', 'designer': 'designer', 'product-owner': 'Product Owner',
-      'tester': 'tester', 'scrum-master': 'Scrum Master', 'stakeholder': 'stakeholder',
-      'team': 'team', 'users': 'users'
-    };
-
-    if (askee === about) {
-      circularOutput.innerHTML = '<em>Select different roles</em> to generate a circular question. The power of this technique is asking someone about a <em>different</em> person\'s perspective.';
-      return;
-    }
-
-    const questions = circularQuestions[askee] && circularQuestions[askee][about];
-    if (questions && questions.length > 0) {
-      const q = questions[Math.floor(Math.random() * questions.length)];
-      circularOutput.innerHTML =
-        '<p style="margin-bottom:0.5rem;font-size:0.8rem;color:var(--text-muted)">Ask <em>' + roleLabels[askee] + '</em> about <em>' + roleLabels[about] + '</em>:</p>' +
-        '<p style="font-size:1.05rem;font-style:italic;margin:0">"' + q + '"</p>' +
-        '<p style="font-size:0.8rem;color:var(--text-muted);margin-top:0.8rem;margin-bottom:0;cursor:pointer" onclick="updateCircular()">Click for another question &rarr;</p>';
+    const a = askeeEl.value, b = aboutEl.value;
+    if (a === b) { circOut.innerHTML = '<em>Select different roles</em> to generate a circular question.'; return; }
+    const qs = CQ[a] && CQ[a][b];
+    if (qs && qs.length) {
+      const q = qs[Math.floor(Math.random() * qs.length)];
+      circOut.innerHTML = '<p style="margin-bottom:0.5rem;font-size:0.8rem;color:var(--text-muted)">Ask <em>'+roleLabels[a]+'</em> about <em>'+roleLabels[b]+'</em>:</p><p style="font-size:1.05rem;font-style:italic;margin:0">"'+q+'"</p><p style="font-size:0.8rem;color:var(--text-muted);margin-top:0.8rem;margin-bottom:0;cursor:pointer" onclick="updateCircular()">Click for another &rarr;</p>';
     } else {
-      circularOutput.innerHTML =
-        '<p style="margin-bottom:0.5rem;font-size:0.8rem;color:var(--text-muted)">Ask <em>' + roleLabels[askee] + '</em> about <em>' + roleLabels[about] + '</em>:</p>' +
-        '<p style="font-style:italic;margin:0">"How do you think <em>' + roleLabels[about] + '</em> would describe the biggest challenge in our current way of working?"</p>';
+      circOut.innerHTML = '<p style="margin-bottom:0.5rem;font-size:0.8rem;color:var(--text-muted)">Ask <em>'+roleLabels[a]+'</em> about <em>'+roleLabels[b]+'</em>:</p><p style="font-style:italic;margin:0">"How do you think <em>'+roleLabels[b]+'</em> would describe the biggest challenge in our way of working?"</p>';
     }
   }
-
-  // Expose globally for the inline onclick
   window.updateCircular = updateCircular;
-
-  askeeSelect.addEventListener('change', updateCircular);
-  aboutSelect.addEventListener('change', updateCircular);
+  askeeEl.addEventListener('change', updateCircular);
+  aboutEl.addEventListener('change', updateCircular);
   updateCircular();
 
-  // ── Worksheet ──
-  const wsSteps = document.querySelectorAll('.ws-step');
-  wsSteps.forEach(step => {
-    const textarea = step.querySelector('textarea');
-    if (textarea) {
-      textarea.addEventListener('focus', () => {
-        wsSteps.forEach(s => s.classList.remove('active'));
-        step.classList.add('active');
+  /* ════════════════════════════════════════════
+     QUESTION DECK
+     ════════════════════════════════════════════ */
+  let deck = [], deckIdx = 0, deckFilter = 'all';
+  function shuffleArr(arr) { for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; } return arr; }
+  function buildDeck() {
+    deck = deckFilter === 'all' ? [...questionBank] : questionBank.filter(q => String(q.t) === deckFilter);
+    shuffleArr(deck); deckIdx = 0; showDeckCard();
+  }
+  function showDeckCard() {
+    const card = document.getElementById('deckCard');
+    if (!deck.length) { document.getElementById('deckQuestion').textContent = 'No questions match this filter.'; return; }
+    const q = deck[deckIdx];
+    card.classList.add('flipping');
+    setTimeout(() => {
+      document.getElementById('deckType').textContent = q.t + ' \u00B7 ' + typeNames[q.t];
+      document.getElementById('deckType').style.color = 'var(' + typeCSSVars[q.t] + ')';
+      document.getElementById('deckQuestion').textContent = '"' + q.q + '"';
+      document.getElementById('deckContext').textContent = q.ctx;
+      document.getElementById('deckCeremony').textContent = q.cer.split(' ').map(c => c.charAt(0).toUpperCase() + c.slice(1).replace('-',' ')).join(' \u00B7 ');
+      document.getElementById('deckCounter').textContent = (deckIdx + 1) + ' / ' + deck.length;
+      card.classList.remove('flipping');
+    }, 200);
+  }
+  document.querySelectorAll('[data-deck-filter]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-deck-filter]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      deckFilter = btn.dataset.deckFilter;
+      buildDeck();
+    });
+  });
+  document.getElementById('deckNext').addEventListener('click', () => { deckIdx = (deckIdx + 1) % deck.length; showDeckCard(); });
+  document.getElementById('deckShuffle').addEventListener('click', () => { shuffleArr(deck); deckIdx = 0; showDeckCard(); });
+  buildDeck();
+
+  /* ════════════════════════════════════════════
+     SITUATION SUGGESTER
+     ════════════════════════════════════════════ */
+  const sitOverlay = document.getElementById('sitOverlay');
+  const sitTags = document.getElementById('sitTags');
+  const sitResults = document.getElementById('sitResults');
+  document.getElementById('fabBtn').addEventListener('click', () => sitOverlay.classList.add('open'));
+  document.getElementById('sitClose').addEventListener('click', () => sitOverlay.classList.remove('open'));
+  sitOverlay.addEventListener('click', e => { if (e.target === sitOverlay) sitOverlay.classList.remove('open'); });
+
+  situations.forEach(s => {
+    const tag = document.createElement('button');
+    tag.className = 'situation-tag';
+    tag.textContent = s.label;
+    tag.addEventListener('click', () => {
+      document.querySelectorAll('.situation-tag').forEach(t => t.classList.remove('active'));
+      tag.classList.add('active');
+      sitResults.innerHTML = s.questions.map(sq =>
+        '<div class="situation-q" style="border-left-color:var('+typeCSSVars[sq.t]+')">' +
+        '<div class="sq-text">"' + sq.q + '"</div>' +
+        '<div class="sq-meta">' + sq.t + ' \u00B7 ' + typeNames[sq.t] + '</div>' +
+        '<div class="sq-why">' + sq.why + '</div></div>'
+      ).join('');
+    });
+    sitTags.appendChild(tag);
+  });
+
+  /* ════════════════════════════════════════════
+     WORKSHEET
+     ════════════════════════════════════════════ */
+  document.querySelectorAll('.ws-step').forEach(step => {
+    const ta = step.querySelector('textarea');
+    if (ta) ta.addEventListener('focus', () => {
+      document.querySelectorAll('.ws-step').forEach(s => s.classList.remove('active'));
+      step.classList.add('active');
+    });
+  });
+  document.getElementById('wsClear').addEventListener('click', () => { if (confirm('Clear all worksheet entries?')) document.querySelectorAll('.worksheet textarea').forEach(t => t.value = ''); });
+  document.getElementById('wsPrint').addEventListener('click', () => window.print());
+
+  /* ════════════════════════════════════════════
+     SESSION JOURNAL
+     ════════════════════════════════════════════ */
+  const JOURNAL_KEY = 'socratic-journal';
+  function getJournal() { try { return JSON.parse(localStorage.getItem(JOURNAL_KEY)) || []; } catch { return []; } }
+  function saveJournal(j) { localStorage.setItem(JOURNAL_KEY, JSON.stringify(j)); }
+
+  // Tabs
+  document.querySelectorAll('.journal-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.journal-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.journal-view').forEach(v => v.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById({new:'jvNew',entries:'jvEntries',stats:'jvStats'}[tab.dataset.jtab]).classList.add('active');
+      if (tab.dataset.jtab === 'entries') renderEntries();
+      if (tab.dataset.jtab === 'stats') renderStats();
+    });
+  });
+
+  // Date default
+  document.getElementById('jeDate').valueAsDate = new Date();
+
+  // Type toggle
+  let selectedJTypes = [];
+  document.querySelectorAll('[data-jtype]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      btn.classList.toggle('active');
+      const t = btn.dataset.jtype;
+      if (selectedJTypes.includes(t)) selectedJTypes = selectedJTypes.filter(x => x !== t);
+      else selectedJTypes.push(t);
+    });
+  });
+
+  // Save entry
+  document.getElementById('jeSave').addEventListener('click', () => {
+    const entry = {
+      id: Date.now(),
+      date: document.getElementById('jeDate').value,
+      context: document.getElementById('jeContext').value,
+      situation: document.getElementById('jeSituation').value,
+      question: document.getElementById('jeQuestion').value,
+      outcome: document.getElementById('jeOutcome').value,
+      reflection: document.getElementById('jeReflection').value,
+      types: [...selectedJTypes],
+    };
+    if (!entry.question && !entry.situation) { alert('Add at least a situation or question.'); return; }
+    const j = getJournal(); j.unshift(entry); saveJournal(j);
+    // Reset form
+    document.getElementById('jeSituation').value = '';
+    document.getElementById('jeQuestion').value = '';
+    document.getElementById('jeOutcome').value = '';
+    document.getElementById('jeReflection').value = '';
+    selectedJTypes = [];
+    document.querySelectorAll('[data-jtype]').forEach(b => b.classList.remove('active'));
+    document.getElementById('jeDate').valueAsDate = new Date();
+    alert('Entry saved!');
+  });
+
+  function renderEntries() {
+    const j = getJournal(), list = document.getElementById('jeList');
+    if (!j.length) { list.innerHTML = '<div class="je-empty">No entries yet. Start logging your coaching sessions!</div>'; return; }
+    list.innerHTML = j.map(e => {
+      const types = (e.types||[]).map(t => typeNames[t]||t).join(', ');
+      return '<div class="je-entry"><div class="je-entry-header"><span class="je-entry-date">'+e.date+'</span>'+(e.context?'<span class="je-entry-ctx">'+e.context+'</span>':'')+'</div>'
+        +(e.situation?'<div style="font-size:0.85rem;color:var(--text-muted);margin-bottom:0.3rem"><strong>Situation:</strong> '+e.situation+'</div>':'')
+        +(e.question?'<div class="je-entry-q">'+e.question+'</div>':'')
+        +(types?'<div style="font-size:0.78rem;color:var(--accent);margin-bottom:0.3rem">Types: '+types+'</div>':'')
+        +(e.outcome?'<div class="je-entry-what"><strong>Result:</strong> '+e.outcome+'</div>':'')
+        +(e.reflection?'<div style="font-size:0.85rem;color:var(--text-muted);margin-top:0.3rem"><strong>Reflection:</strong> '+e.reflection+'</div>':'')
+        +'<div class="je-entry-actions"><button onclick="deleteEntry('+e.id+')">Delete</button></div></div>';
+    }).join('');
+  }
+  window.deleteEntry = function(id) {
+    if (!confirm('Delete this entry?')) return;
+    const j = getJournal().filter(e => e.id !== id); saveJournal(j); renderEntries();
+  };
+
+  function renderStats() {
+    const j = getJournal();
+    const grid = document.getElementById('statsGrid');
+    const bars = document.getElementById('typeBars');
+    const total = j.length;
+    const contexts = {}; j.forEach(e => { if (e.context) contexts[e.context] = (contexts[e.context]||0) + 1; });
+    const topCtx = Object.entries(contexts).sort((a,b) => b[1]-a[1])[0];
+    const typeCounts = {1:0,2:0,3:0,4:0,5:0,6:0};
+    j.forEach(e => (e.types||[]).forEach(t => typeCounts[t] = (typeCounts[t]||0) + 1));
+    const maxType = Math.max(...Object.values(typeCounts), 1);
+
+    grid.innerHTML = '<div class="stat-card"><div class="stat-num">'+total+'</div><div class="stat-label">Total entries</div></div>'
+      +'<div class="stat-card"><div class="stat-num">'+Object.keys(contexts).length+'</div><div class="stat-label">Contexts used</div></div>'
+      +(topCtx?'<div class="stat-card"><div class="stat-num" style="font-size:1.1rem">'+topCtx[0]+'</div><div class="stat-label">Most common ('+topCtx[1]+')</div></div>':'');
+
+    const colors = {1:'var(--cat1)',2:'var(--cat2)',3:'var(--cat3)',4:'var(--cat4)',5:'var(--cat5)',6:'var(--cat6)'};
+    bars.innerHTML = Object.entries(typeCounts).map(([t,c]) =>
+      '<div class="type-bar-row"><span class="type-bar-label">'+typeNames[t]+'</span><div class="type-bar-track"><div class="type-bar-fill" style="width:'+(c/maxType*100)+'%;background:'+colors[t]+'"></div></div><span class="type-bar-count">'+c+'</span></div>'
+    ).join('');
+  }
+
+  /* ════════════════════════════════════════════
+     ROLEPLAY / PRACTICE MODE
+     ════════════════════════════════════════════ */
+  const RP_KEY = 'socratic-api-key';
+  const rpScenarios = {
+    'defensive-dev': { title:'Defensive Developer', system:"You are a software developer named Alex on an agile product team. You just received code review feedback that you feel is nitpicky and personal. You're talented but take criticism hard. You respond defensively at first — crossing your arms metaphorically, justifying your choices, and subtly implying the reviewer doesn't understand. However, you're open to genuine curiosity. If the coach asks good Socratic questions (especially about assumptions and perspectives), you gradually soften and start reflecting. Don't cave immediately — make the coach work for it with 3-4 exchanges before real openness. Keep responses to 2-3 sentences. Stay in character." },
+    'scope-creep': { title:'Sprint Scope Argument', system:"You are a team of voices (speak as 'the team' or individual members). The sprint planning meeting is heated — the Product Owner wants to add 3 more stories but the developers feel overloaded already. Some team members are people-pleasers who say yes to everything, others are frustrated and shutting down. Respond as different team members depending on the coaching question. If the coach probes assumptions about capacity or asks about consequences, the team starts finding clarity. Keep responses to 2-3 sentences per 'voice'." },
+    'unrealistic-deadline': { title:'Unrealistic Deadline', system:"You are Jordan, a Product Owner under pressure from leadership. You've just told the team they need to deliver a major feature in half the originally estimated time. You genuinely believe it's important but haven't fully thought through the implications. You speak in business language ('competitive advantage', 'market window'). Good coaching questions about evidence and implications help you realize you need to negotiate scope rather than timeline. Keep responses to 2-3 sentences." },
+    'quiet-member': { title:'Quiet Team Member', system:"You are Sam, a backend developer who has become increasingly quiet in team meetings over the past few sprints. You feel your ideas get ignored or talked over. You're not angry — just resigned. You give short, polite answers initially. Clarification questions feel safe. If the coach creates psychological safety through perspective questions and genuine curiosity, you slowly open up about feeling unheard. Keep responses short (1-2 sentences) at first, gradually longer as trust builds." },
+    'arch-conflict': { title:'Architecture Conflict', system:"You alternate between two developers: Casey (who wants microservices) and Riley (who wants a modular monolith). Both have valid technical arguments but have stopped listening to each other. Casey focuses on scalability, Riley on simplicity. They talk past each other. Good Socratic questions about evidence, implications, and finding common ground help them realize they agree on more than they think. Switch between perspectives based on whom the coach addresses. Keep each response to 2-3 sentences." },
+    'wrong-feature': { title:'Stakeholder vs. Team', system:"You are Morgan, a senior stakeholder who has demanded a complex reporting dashboard feature. You're convinced it's critical for a board presentation. The development team believes users actually need better core workflow features instead. You're not unreasonable, but you're under pressure and haven't talked to actual users recently. Questions probing evidence ('what data supports this?') and perspectives ('how would users prioritize this?') make you reconsider. Keep responses to 2-3 sentences." }
+  };
+
+  let rpMessages = [], rpActiveScenario = null, rpBusy = false;
+
+  // API key
+  const rpKeyInput = document.getElementById('rpApiKey');
+  const rpStatus = document.getElementById('rpApiStatus');
+  const savedKey = localStorage.getItem(RP_KEY);
+  if (savedKey) { rpKeyInput.value = savedKey; rpStatus.textContent = 'API key saved.'; rpStatus.className = 'rp-api-status ok'; }
+
+  document.getElementById('rpSaveKey').addEventListener('click', () => {
+    const k = rpKeyInput.value.trim();
+    if (k) { localStorage.setItem(RP_KEY, k); rpStatus.textContent = 'API key saved.'; rpStatus.className = 'rp-api-status ok'; }
+    else { localStorage.removeItem(RP_KEY); rpStatus.textContent = 'No API key set.'; rpStatus.className = 'rp-api-status missing'; }
+  });
+
+  // Scenario selection
+  document.querySelectorAll('.rp-scenario').forEach(el => {
+    el.addEventListener('click', () => {
+      const key = el.dataset.scenario;
+      if (!localStorage.getItem(RP_KEY)) { alert('Please save a Claude API key first.'); return; }
+      document.querySelectorAll('.rp-scenario').forEach(s => s.classList.remove('active'));
+      el.classList.add('active');
+      startRoleplay(key);
+    });
+  });
+
+  function startRoleplay(key) {
+    rpActiveScenario = key;
+    const sc = rpScenarios[key];
+    rpMessages = [];
+    document.getElementById('rpChatArea').classList.remove('rp-hidden');
+    document.getElementById('rpScenarioTitle').textContent = sc.title;
+    document.getElementById('rpChat').innerHTML = '<div class="rp-msg system">Scenario started: ' + sc.title + '. You are the coach — begin with your first question or observation.</div>';
+    document.getElementById('rpInput').disabled = false;
+    document.getElementById('rpSend').disabled = false;
+    document.getElementById('rpInput').focus();
+    document.getElementById('rpHints').innerHTML = '<strong>Coaching hints:</strong> Try starting with a clarification question to understand their perspective before probing deeper.';
+  }
+
+  document.getElementById('rpEnd').addEventListener('click', () => {
+    document.getElementById('rpChatArea').classList.add('rp-hidden');
+    document.querySelectorAll('.rp-scenario').forEach(s => s.classList.remove('active'));
+    rpActiveScenario = null; rpMessages = [];
+  });
+
+  async function sendRpMessage() {
+    if (rpBusy || !rpActiveScenario) return;
+    const input = document.getElementById('rpInput');
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = '';
+    rpBusy = true;
+
+    // Show coach message
+    const chat = document.getElementById('rpChat');
+    chat.innerHTML += '<div class="rp-msg coach">' + escHtml(text) + '</div>';
+    chat.scrollTop = chat.scrollHeight;
+
+    // Classify coach's question type for hints
+    updateHints(text);
+
+    // Add to messages
+    rpMessages.push({ role: 'user', content: text });
+
+    // Show typing indicator
+    chat.innerHTML += '<div class="rp-msg coachee" id="rpTyping" style="opacity:0.5">Thinking...</div>';
+    chat.scrollTop = chat.scrollHeight;
+
+    try {
+      const apiKey = localStorage.getItem(RP_KEY);
+      const sc = rpScenarios[rpActiveScenario];
+      const resp = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-6-20250514',
+          max_tokens: 300,
+          system: sc.system,
+          messages: rpMessages
+        })
       });
+      const data = await resp.json();
+      const reply = data.content && data.content[0] ? data.content[0].text : 'I\'m not sure how to respond to that.';
+      rpMessages.push({ role: 'assistant', content: reply });
+      const typing = document.getElementById('rpTyping');
+      if (typing) typing.remove();
+      chat.innerHTML += '<div class="rp-msg coachee">' + escHtml(reply) + '</div>';
+    } catch (err) {
+      const typing = document.getElementById('rpTyping');
+      if (typing) typing.remove();
+      chat.innerHTML += '<div class="rp-msg system">Error: ' + escHtml(err.message) + '. Check your API key.</div>';
     }
-  });
+    chat.scrollTop = chat.scrollHeight;
+    rpBusy = false;
+    input.focus();
+  }
 
-  document.getElementById('wsClear').addEventListener('click', () => {
-    if (confirm('Clear all worksheet entries?')) {
-      document.querySelectorAll('.worksheet textarea').forEach(ta => { ta.value = ''; });
-    }
-  });
+  function escHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 
-  document.getElementById('wsPrint').addEventListener('click', () => {
-    window.print();
-  });
+  function updateHints(text) {
+    const t = text.toLowerCase();
+    const hints = [];
+    if (/what do you mean|can you explain|what exactly|rephrase|example/.test(t)) hints.push('Clarification detected');
+    if (/assum|what if|suppose|what else/.test(t)) hints.push('Probing assumptions');
+    if (/evidence|data|how do you know|prove|show me/.test(t)) hints.push('Probing evidence');
+    if (/perspective|how would|someone else|another way|who else/.test(t)) hints.push('Widening perspectives');
+    if (/consequence|what happen|impact|implication|then what/.test(t)) hints.push('Exploring implications');
+    if (/why are we|real challenge|right question|what.s making this/.test(t)) hints.push('Meta-questioning');
+    const used = hints.length ? hints.join(', ') : 'Try a more open-ended question';
+    const suggest = !hints.length ? 'Consider asking: "What do you mean by that?" or "What if the opposite were true?"'
+      : hints.length === 1 ? 'Good! Now try a different type to widen the conversation.'
+      : 'Great range of question types!';
+    document.getElementById('rpHints').innerHTML = '<strong>Detected:</strong> ' + used + '<br><strong>Suggestion:</strong> ' + suggest;
+  }
 
-  // ── Smooth scroll for nav ──
+  document.getElementById('rpSend').addEventListener('click', sendRpMessage);
+  document.getElementById('rpInput').addEventListener('keydown', e => { if (e.key === 'Enter') sendRpMessage(); });
+
+  /* ════════════════════════════════════════════
+     SMOOTH SCROLL
+     ════════════════════════════════════════════ */
   document.querySelectorAll('nav a[href^="#"]').forEach(a => {
     a.addEventListener('click', e => {
       e.preventDefault();
