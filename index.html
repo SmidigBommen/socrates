@@ -372,43 +372,38 @@
   .type-bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
   .type-bar-count { width: 24px; font-weight: 600; }
 
-  /* ── Roleplay ── */
-  .rp-setup { max-width: 500px; margin: 0 auto 1.5rem; }
-  .rp-api-row { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
-  .rp-api-row input { flex: 1; padding: 0.5rem 0.7rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem; font-family: monospace; background: var(--bg); }
-  .rp-api-row input:focus { outline: none; border-color: var(--accent); }
-  .rp-api-status { font-size: 0.82rem; margin-bottom: 1rem; }
-  .rp-api-status.ok { color: var(--cat3); }
-  .rp-api-status.missing { color: var(--text-muted); }
-  .rp-scenarios { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 0.8rem; margin-bottom: 1.5rem; }
-  .rp-scenario {
-    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
-    padding: 0.9rem 1.1rem; cursor: pointer; transition: var(--transition);
+  /* ── Scenario Guide ── */
+  .scenario-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; }
+  .scenario-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    overflow: hidden; transition: var(--transition); cursor: pointer;
   }
-  .rp-scenario:hover { border-color: var(--accent); box-shadow: var(--shadow); }
-  .rp-scenario.active { border-color: var(--accent); background: var(--accent-bg); }
-  .rp-scenario h4 { font-size: 0.9rem; margin-bottom: 0.2rem; }
-  .rp-scenario p { font-size: 0.8rem; color: var(--text-muted); margin: 0; }
-
-  .rp-chat-area { max-width: 660px; margin: 0 auto; }
-  .rp-chat {
-    background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
-    min-height: 300px; max-height: 450px; overflow-y: auto; padding: 1rem;
-    display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 0.8rem;
+  .scenario-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+  .scenario-card.open { box-shadow: var(--shadow-lg); }
+  .scenario-header {
+    padding: 1.1rem 1.3rem; display: flex; align-items: center; gap: 0.8rem; user-select: none;
   }
-  .rp-msg { max-width: 85%; padding: 0.7rem 1rem; border-radius: 10px; font-size: 0.92rem; line-height: 1.5; }
-  .rp-msg.coach { background: var(--accent); color: #fff; align-self: flex-end; border-bottom-right-radius: 3px; }
-  .rp-msg.coachee { background: var(--surface); border: 1px solid var(--border); align-self: flex-start; border-bottom-left-radius: 3px; }
-  .rp-msg.system { background: var(--accent-bg); align-self: center; font-size: 0.82rem; color: var(--text-muted); text-align: center; font-style: italic; }
-  .rp-input-row { display: flex; gap: 0.5rem; }
-  .rp-input-row input { flex: 1; padding: 0.6rem 0.9rem; border: 1px solid var(--border); border-radius: 8px; font-size: 0.92rem; font-family: inherit; background: var(--surface); }
-  .rp-input-row input:focus { outline: none; border-color: var(--accent); }
-  .rp-hints {
-    background: var(--accent-bg); border-radius: 8px; padding: 0.8rem 1rem;
-    font-size: 0.82rem; color: var(--text-muted); margin-top: 0.8rem;
+  .scenario-icon { font-size: 1.3rem; flex-shrink: 0; }
+  .scenario-header h4 { margin: 0; font-size: 0.95rem; flex: 1; }
+  .scenario-header .card-chevron { width: 18px; height: 18px; }
+  .scenario-body {
+    max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s ease;
+    padding: 0 1.3rem;
   }
-  .rp-hints strong { color: var(--accent); }
-  .rp-hidden { display: none; }
+  .scenario-card.open .scenario-body { max-height: 1200px; padding: 0 1.3rem 1.3rem; }
+  .scenario-body .sc-desc { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 0.8rem; }
+  .scenario-body h5 { font-size: 0.85rem; font-weight: 600; color: var(--accent); margin-bottom: 0.4rem; margin-top: 0.8rem; }
+  .scenario-body .sc-questions { padding-left: 1rem; margin-bottom: 0.5rem; }
+  .scenario-body .sc-questions li { font-size: 0.88rem; margin-bottom: 0.35rem; font-style: italic; }
+  .scenario-body .sc-tip {
+    background: var(--accent-bg); border-radius: 6px; padding: 0.6rem 0.9rem;
+    font-size: 0.84rem; margin-top: 0.6rem;
+  }
+  .scenario-body .sc-tip strong { color: var(--accent); }
+  .scenario-body .sc-avoid {
+    background: #fdf2f2; border-radius: 6px; padding: 0.6rem 0.9rem;
+    font-size: 0.84rem; margin-top: 0.4rem; color: #7c5e5e;
+  }
 
   /* ── Print ── */
   @media print {
@@ -429,7 +424,7 @@
   <a href="#ceremonies">By Ceremony</a>
   <a href="#circular">Circular</a>
   <a href="#journal">Journal</a>
-  <a href="#roleplay">Practice</a>
+  <a href="#scenarios">Scenarios</a>
   <a href="#worksheet">Worksheet</a>
   <a href="#flow">Flow</a>
 </nav>
@@ -936,63 +931,13 @@
   </div>
 </section>
 
-<!-- ═══════════════ ROLEPLAY / PRACTICE ═══════════════ -->
-<section id="roleplay">
+<!-- ═══════════════ SCENARIO GUIDE ═══════════════ -->
+<section id="scenarios">
   <div class="container">
-    <h2>Practice Mode</h2>
-    <p class="lead">Practice your Socratic questioning with an AI-powered coachee. Pick a scenario and try different question types.</p>
+    <h2>Coaching Scenarios</h2>
+    <p class="lead">Common agile team situations with recommended questions, coaching tips, and traps to avoid. Click to expand.</p>
 
-    <div class="rp-setup">
-      <label style="font-weight:600;font-size:0.88rem;display:block;margin-bottom:0.3rem;">Claude API Key</label>
-      <div class="rp-api-row">
-        <input type="password" id="rpApiKey" placeholder="sk-ant-...">
-        <button class="btn btn-primary" id="rpSaveKey">Save</button>
-      </div>
-      <div class="rp-api-status missing" id="rpApiStatus">No API key set. Your key is stored only in this browser.</div>
-    </div>
-
-    <h3>Choose a scenario</h3>
-    <div class="rp-scenarios" id="rpScenarios">
-      <div class="rp-scenario" data-scenario="defensive-dev">
-        <h4>Defensive Developer</h4>
-        <p>A developer pushes back on code review feedback, taking it personally.</p>
-      </div>
-      <div class="rp-scenario" data-scenario="scope-creep">
-        <h4>Sprint Scope Argument</h4>
-        <p>The team argues about taking on too much work in the sprint.</p>
-      </div>
-      <div class="rp-scenario" data-scenario="unrealistic-deadline">
-        <h4>Unrealistic Deadline</h4>
-        <p>The Product Owner pushes a deadline the team thinks is impossible.</p>
-      </div>
-      <div class="rp-scenario" data-scenario="quiet-member">
-        <h4>Quiet Team Member</h4>
-        <p>A team member has disengaged and barely speaks in retros.</p>
-      </div>
-      <div class="rp-scenario" data-scenario="arch-conflict">
-        <h4>Architecture Conflict</h4>
-        <p>Two developers disagree strongly about a technical approach.</p>
-      </div>
-      <div class="rp-scenario" data-scenario="wrong-feature">
-        <h4>Stakeholder vs. Team</h4>
-        <p>A stakeholder demands a feature the team believes is wrong for users.</p>
-      </div>
-    </div>
-
-    <div class="rp-chat-area rp-hidden" id="rpChatArea">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.8rem;">
-        <h3 id="rpScenarioTitle" style="margin:0"></h3>
-        <button class="btn btn-secondary" id="rpEnd" style="font-size:0.8rem;padding:0.3rem 0.8rem;">End Session</button>
-      </div>
-      <div class="rp-chat" id="rpChat"></div>
-      <div class="rp-input-row">
-        <input type="text" id="rpInput" placeholder="Type your coaching question or response..." disabled>
-        <button class="btn btn-primary" id="rpSend" disabled>Send</button>
-      </div>
-      <div class="rp-hints" id="rpHints">
-        <strong>Coaching hints:</strong> Choose a scenario above to begin practicing.
-      </div>
-    </div>
+    <div class="scenario-grid" id="scenarioGrid"></div>
   </div>
 </section>
 
@@ -1546,139 +1491,95 @@
   }
 
   /* ════════════════════════════════════════════
-     ROLEPLAY / PRACTICE MODE
+     COACHING SCENARIOS
      ════════════════════════════════════════════ */
-  const RP_KEY = 'socratic-api-key';
-  const rpScenarios = {
-    'defensive-dev': { title:'Defensive Developer', system:"You are a software developer named Alex on an agile product team. You just received code review feedback that you feel is nitpicky and personal. You're talented but take criticism hard. You respond defensively at first — crossing your arms metaphorically, justifying your choices, and subtly implying the reviewer doesn't understand. However, you're open to genuine curiosity. If the coach asks good Socratic questions (especially about assumptions and perspectives), you gradually soften and start reflecting. Don't cave immediately — make the coach work for it with 3-4 exchanges before real openness. Keep responses to 2-3 sentences. Stay in character." },
-    'scope-creep': { title:'Sprint Scope Argument', system:"You are a team of voices (speak as 'the team' or individual members). The sprint planning meeting is heated — the Product Owner wants to add 3 more stories but the developers feel overloaded already. Some team members are people-pleasers who say yes to everything, others are frustrated and shutting down. Respond as different team members depending on the coaching question. If the coach probes assumptions about capacity or asks about consequences, the team starts finding clarity. Keep responses to 2-3 sentences per 'voice'." },
-    'unrealistic-deadline': { title:'Unrealistic Deadline', system:"You are Jordan, a Product Owner under pressure from leadership. You've just told the team they need to deliver a major feature in half the originally estimated time. You genuinely believe it's important but haven't fully thought through the implications. You speak in business language ('competitive advantage', 'market window'). Good coaching questions about evidence and implications help you realize you need to negotiate scope rather than timeline. Keep responses to 2-3 sentences." },
-    'quiet-member': { title:'Quiet Team Member', system:"You are Sam, a backend developer who has become increasingly quiet in team meetings over the past few sprints. You feel your ideas get ignored or talked over. You're not angry — just resigned. You give short, polite answers initially. Clarification questions feel safe. If the coach creates psychological safety through perspective questions and genuine curiosity, you slowly open up about feeling unheard. Keep responses short (1-2 sentences) at first, gradually longer as trust builds." },
-    'arch-conflict': { title:'Architecture Conflict', system:"You alternate between two developers: Casey (who wants microservices) and Riley (who wants a modular monolith). Both have valid technical arguments but have stopped listening to each other. Casey focuses on scalability, Riley on simplicity. They talk past each other. Good Socratic questions about evidence, implications, and finding common ground help them realize they agree on more than they think. Switch between perspectives based on whom the coach addresses. Keep each response to 2-3 sentences." },
-    'wrong-feature': { title:'Stakeholder vs. Team', system:"You are Morgan, a senior stakeholder who has demanded a complex reporting dashboard feature. You're convinced it's critical for a board presentation. The development team believes users actually need better core workflow features instead. You're not unreasonable, but you're under pressure and haven't talked to actual users recently. Questions probing evidence ('what data supports this?') and perspectives ('how would users prioritize this?') make you reconsider. Keep responses to 2-3 sentences." }
-  };
+  const scenarioData = [
+    { icon:'\u{1F399}', title:'Defensive Developer', desc:'A developer pushes back on code review feedback, taking it personally.',
+      whyHard:'Defensiveness is a self-protection response. Pushing back directly will escalate it. The coach\'s job is to create safety first, then open curiosity.',
+      approach:[
+        {phase:'Start with Clarification', qs:['Help me understand your perspective \u2014 what matters most to you here?','Can you walk me through your thinking on this approach?'], why:'Validates their position before any probing. Reduces threat.'},
+        {phase:'Probe Assumptions gently', qs:['What would need to be true for this feedback to be useful?','What if the reviewer saw something you haven\'t considered yet?'], why:'Reframes from attack to hypothesis. Opens without pushing.'},
+        {phase:'Widen with Perspectives', qs:['If you were reviewing someone else\'s code, what would you focus on?','How would you approach this if giving advice to a junior developer?'], why:'Creates psychological distance from the emotional reaction.'},
+        {phase:'Go Meta if stuck', qs:['What\'s the real concern underneath this for you?','I notice this feels charged \u2014 what\'s at stake?'], why:'Names the dynamic without judging it.'},
+      ],
+      tips:['Don\'t rush past the defensiveness \u2014 acknowledge it first.','Avoid "but" after validation ("I hear you, but..."). Use "and" instead.','Silence after a good question is often where the shift happens.'],
+      avoid:['Don\'t side with the reviewer or the developer.','Don\'t say "don\'t take it personally" \u2014 they already are.','Don\'t ask "why" questions early \u2014 they feel accusatory when someone is defensive.']
+    },
+    { icon:'\u{1F4CB}', title:'Sprint Scope Argument', desc:'The team argues about taking on too much work. PO wants more, devs feel overloaded.',
+      whyHard:'This is often a proxy conflict about trust, predictability, or unspoken pressure from leadership. The surface argument (how many stories) hides the real issue.',
+      approach:[
+        {phase:'Clarify what\'s actually being debated', qs:['Are we debating the amount of work, or how confident we feel about delivering it?','What does "too much" mean specifically \u2014 can we put numbers on it?'], why:'Often the team hasn\'t clearly defined the disagreement.'},
+        {phase:'Probe Assumptions on both sides', qs:['What are we assuming about our capacity based on?','PO: what would happen if we took on fewer stories but delivered them all?'], why:'Challenges optimism bias and fear-based resistance equally.'},
+        {phase:'Surface Evidence', qs:['What happened last sprint when we committed to a similar amount?','What data do we have about our actual velocity?'], why:'Moves from feelings to facts.'},
+        {phase:'Explore Implications', qs:['If we take all of this on and miss, what\'s the cost? If we take less and deliver, what do we gain?','What\'s the consequence of this pattern repeating every sprint?'], why:'Makes trade-offs explicit and visible.'},
+      ],
+      tips:['Let both sides feel heard before introducing data.','Frame it as "the team vs. the problem" not "PO vs. developers."','Velocity data is your friend here \u2014 but only after emotions are acknowledged.'],
+      avoid:['Don\'t take sides or arbitrate the outcome.','Don\'t let seniority or volume decide the argument.','Don\'t skip the emotional layer and jump straight to metrics.']
+    },
+    { icon:'\u{23F0}', title:'Unrealistic Deadline', desc:'The Product Owner pushes a deadline the team thinks is impossible.',
+      whyHard:'The PO is usually under external pressure they haven\'t fully shared. The team feels unheard. Both are right about different things.',
+      approach:[
+        {phase:'Clarify the constraint', qs:['What\'s driving this timeline? Help us understand the business context.','What specifically needs to ship by that date vs. what\'s nice to have?'], why:'Often "the deadline" is actually "something needs to happen by then" \u2014 scope is negotiable.'},
+        {phase:'Probe Evidence', qs:['What data do we have about how long similar work has taken us?','How confident are we in these estimates, and what would make us more confident?'], why:'Grounds the conversation in reality.'},
+        {phase:'Explore Implications together', qs:['If we hit the date but quality suffers, what happens? If we slip but deliver well, what happens?','What\'s the real risk we\'re trying to manage here?'], why:'Shifts from deadline-as-sacred to risk-management conversation.'},
+        {phase:'Find Perspectives', qs:['What would a stakeholder say is the minimum viable delivery for that date?','If we asked users what they\'d rather have \u2014 fast or complete \u2014 what would they say?'], why:'Opens creative solutions like phased delivery.'},
+      ],
+      tips:['Help the PO feel safe sharing the external pressure \u2014 they\'re often stuck in the middle.','Frame it as scope negotiation, not deadline negotiation.','A question like "What can we cut?" is more productive than "We can\'t do this."'],
+      avoid:['Don\'t let the team just say "no" without engaging with the business need.','Don\'t let the PO steamroll without acknowledging the team\'s expertise.','Don\'t solve it for them \u2014 facilitate the negotiation.']
+    },
+    { icon:'\u{1F910}', title:'Quiet Team Member', desc:'Someone has disengaged and barely speaks in retrospectives or meetings.',
+      whyHard:'Silence can mean many things: feeling unsafe, feeling unheard, introversion, or checking out. You can\'t know which without creating space to find out.',
+      approach:[
+        {phase:'Create safety with Clarification', qs:['What\'s on your mind?','I\'d love to hear your take \u2014 what stands out to you?'], why:'Low-stakes, open invitations. No pressure to have a "big" opinion.'},
+        {phase:'Use Circular Questions (Perspectives)', qs:['[To others] What do you think [quiet person] would say is the biggest challenge right now?','[To the person] What do you think the team might be missing in this conversation?'], why:'Circular questions signal that their view matters without putting them on the spot.'},
+        {phase:'Try structured formats', qs:['Let\'s do a round \u2014 one word each: how are you feeling about this sprint?','Everyone write down one concern silently, then we\'ll share.'], why:'Written/structured formats bypass the anxiety of speaking up in a free-for-all.'},
+        {phase:'1-on-1 follow-up', qs:['I noticed you\'ve been quieter lately \u2014 is there anything I can do differently?','What would make it easier for you to share your ideas in the team?'], why:'Sometimes the real conversation needs to happen privately first.'},
+      ],
+      tips:['Don\'t call them out publicly ("You\'ve been quiet \u2014 what do you think?"). It backfires.','Create multiple channels for input: writing, async, 1-on-1, small groups.','Watch for the team dynamic that\'s causing the silence \u2014 is someone else dominating?'],
+      avoid:['Don\'t assume they have nothing to say.','Don\'t force participation \u2014 create conditions for it.','Don\'t diagnose the problem before asking them about it.']
+    },
+    { icon:'\u{2694}', title:'Architecture Conflict', desc:'Two developers disagree strongly about a technical approach and have stopped listening.',
+      whyHard:'Technical debates often become identity debates ("I\'m a microservices person"). Once positions harden, new information stops getting processed.',
+      approach:[
+        {phase:'Find common ground with Clarification', qs:['What problem are we both trying to solve here?','What do you both agree on about what the system needs?'], why:'Refocuses on shared goals rather than competing solutions.'},
+        {phase:'Probe Assumptions on both sides', qs:['What would need to be true about our scale for microservices to be the right call?','What are we assuming about future requirements?'], why:'Turns positions into hypotheses that can be tested.'},
+        {phase:'Demand Evidence', qs:['Can we build a small proof of concept for each approach and compare?','What does the data from our current system tell us about which constraints matter most?'], why:'Moves from opinion to experiment.'},
+        {phase:'Widen Perspectives', qs:['What would a new developer joining the team prefer to work with?','What would the ops team say about maintaining each option?'], why:'Brings in voices beyond the two debaters.'},
+      ],
+      tips:['Draw out the underlying values (simplicity vs. scalability) and name them explicitly.','Ask: "What would change your mind?" \u2014 if nothing would, that\'s the real problem.','A time-boxed experiment often resolves what debate cannot.'],
+      avoid:['Don\'t let this become a proxy for a power struggle.','Don\'t pick the "right" technical answer yourself.','Don\'t let the debate drag across multiple sprints without resolution.']
+    },
+    { icon:'\u{1F3AF}', title:'Stakeholder vs. Team', desc:'A stakeholder demands a feature the team believes is wrong for users.',
+      whyHard:'The stakeholder has organizational power but may lack user contact. The team has user empathy but may lack business context. Both feel unheard.',
+      approach:[
+        {phase:'Probe Evidence from both sides', qs:['What data do we have about what users actually need?','Stakeholder: what business outcome are you trying to achieve with this feature?'], why:'Often the stakeholder\'s real need can be met a different way.'},
+        {phase:'Separate goal from solution', qs:['What if we could achieve that business outcome with a different approach?','What exactly needs to be true for the board presentation to succeed?'], why:'The feature is a proposed solution. The goal behind it may have better solutions.'},
+        {phase:'Widen Perspectives', qs:['How would users prioritize this against the improvements the team has proposed?','What would happen if we shipped this and users didn\'t use it?'], why:'Introduces the user as a third voice in the room.'},
+        {phase:'Explore Implications', qs:['If we build this and it\'s wrong, what\'s the cost to reverse? If we validate first, what do we lose?','What\'s the cost of being wrong vs. the cost of being two weeks slower?'], why:'Frames it as a risk decision rather than a loyalty test.'},
+      ],
+      tips:['Help the stakeholder feel heard before challenging their solution.','Frame it as "how might we achieve your goal AND serve users."','Propose a small experiment rather than a binary build/don\'t-build decision.'],
+      avoid:['Don\'t let the team dismiss the stakeholder\'s business concerns.','Don\'t let the stakeholder override without engaging with the evidence.','Don\'t position yourself as the arbiter \u2014 facilitate the conversation.']
+    },
+  ];
 
-  let rpMessages = [], rpActiveScenario = null, rpBusy = false;
-
-  // API key
-  const rpKeyInput = document.getElementById('rpApiKey');
-  const rpStatus = document.getElementById('rpApiStatus');
-  const savedKey = localStorage.getItem(RP_KEY);
-  if (savedKey) { rpKeyInput.value = savedKey; rpStatus.textContent = 'API key saved.'; rpStatus.className = 'rp-api-status ok'; }
-
-  document.getElementById('rpSaveKey').addEventListener('click', () => {
-    const k = rpKeyInput.value.trim();
-    if (k) { localStorage.setItem(RP_KEY, k); rpStatus.textContent = 'API key saved.'; rpStatus.className = 'rp-api-status ok'; }
-    else { localStorage.removeItem(RP_KEY); rpStatus.textContent = 'No API key set.'; rpStatus.className = 'rp-api-status missing'; }
+  const scGrid = document.getElementById('scenarioGrid');
+  const chevronSVG = '<svg class="card-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"/></svg>';
+  scenarioData.forEach(sc => {
+    const card = document.createElement('div');
+    card.className = 'scenario-card';
+    card.innerHTML = '<div class="scenario-header"><span class="scenario-icon">'+sc.icon+'</span><h4>'+sc.title+'</h4>'+chevronSVG+'</div>'
+      +'<div class="scenario-body">'
+      +'<p class="sc-desc">'+sc.desc+'</p>'
+      +'<h5>Why this is hard</h5><p style="font-size:0.88rem">'+sc.whyHard+'</p>'
+      +sc.approach.map(a => '<h5>'+a.phase+'</h5><ul class="sc-questions">'+a.qs.map(q => '<li>"'+q+'"</li>').join('')+'</ul><p style="font-size:0.82rem;color:var(--text-muted);margin-top:-0.2rem">'+a.why+'</p>').join('')
+      +'<div class="sc-tip"><strong>Tips:</strong><ul style="margin:0.3rem 0 0 1rem">'+sc.tips.map(t => '<li>'+t+'</li>').join('')+'</ul></div>'
+      +'<div class="sc-avoid"><strong>Avoid:</strong><ul style="margin:0.3rem 0 0 1rem">'+sc.avoid.map(a => '<li>'+a+'</li>').join('')+'</ul></div>'
+      +'</div>';
+    card.querySelector('.scenario-header').addEventListener('click', () => card.classList.toggle('open'));
+    card.querySelector('.scenario-header').setAttribute('tabindex', '0');
+    card.querySelector('.scenario-header').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.classList.toggle('open'); } });
+    scGrid.appendChild(card);
   });
-
-  // Scenario selection
-  document.querySelectorAll('.rp-scenario').forEach(el => {
-    el.addEventListener('click', () => {
-      const key = el.dataset.scenario;
-      if (!localStorage.getItem(RP_KEY)) { alert('Please save a Claude API key first.'); return; }
-      document.querySelectorAll('.rp-scenario').forEach(s => s.classList.remove('active'));
-      el.classList.add('active');
-      startRoleplay(key);
-    });
-  });
-
-  function startRoleplay(key) {
-    rpActiveScenario = key;
-    const sc = rpScenarios[key];
-    rpMessages = [];
-    document.getElementById('rpChatArea').classList.remove('rp-hidden');
-    document.getElementById('rpScenarioTitle').textContent = sc.title;
-    document.getElementById('rpChat').innerHTML = '<div class="rp-msg system">Scenario started: ' + sc.title + '. You are the coach — begin with your first question or observation.</div>';
-    document.getElementById('rpInput').disabled = false;
-    document.getElementById('rpSend').disabled = false;
-    document.getElementById('rpInput').focus();
-    document.getElementById('rpHints').innerHTML = '<strong>Coaching hints:</strong> Try starting with a clarification question to understand their perspective before probing deeper.';
-  }
-
-  document.getElementById('rpEnd').addEventListener('click', () => {
-    document.getElementById('rpChatArea').classList.add('rp-hidden');
-    document.querySelectorAll('.rp-scenario').forEach(s => s.classList.remove('active'));
-    rpActiveScenario = null; rpMessages = [];
-  });
-
-  async function sendRpMessage() {
-    if (rpBusy || !rpActiveScenario) return;
-    const input = document.getElementById('rpInput');
-    const text = input.value.trim();
-    if (!text) return;
-    input.value = '';
-    rpBusy = true;
-
-    // Show coach message
-    const chat = document.getElementById('rpChat');
-    chat.innerHTML += '<div class="rp-msg coach">' + escHtml(text) + '</div>';
-    chat.scrollTop = chat.scrollHeight;
-
-    // Classify coach's question type for hints
-    updateHints(text);
-
-    // Add to messages
-    rpMessages.push({ role: 'user', content: text });
-
-    // Show typing indicator
-    chat.innerHTML += '<div class="rp-msg coachee" id="rpTyping" style="opacity:0.5">Thinking...</div>';
-    chat.scrollTop = chat.scrollHeight;
-
-    try {
-      const apiKey = localStorage.getItem(RP_KEY);
-      const sc = rpScenarios[rpActiveScenario];
-      const resp = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': apiKey,
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-direct-browser-access': 'true'
-        },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-6-20250514',
-          max_tokens: 300,
-          system: sc.system,
-          messages: rpMessages
-        })
-      });
-      const data = await resp.json();
-      const reply = data.content && data.content[0] ? data.content[0].text : 'I\'m not sure how to respond to that.';
-      rpMessages.push({ role: 'assistant', content: reply });
-      const typing = document.getElementById('rpTyping');
-      if (typing) typing.remove();
-      chat.innerHTML += '<div class="rp-msg coachee">' + escHtml(reply) + '</div>';
-    } catch (err) {
-      const typing = document.getElementById('rpTyping');
-      if (typing) typing.remove();
-      chat.innerHTML += '<div class="rp-msg system">Error: ' + escHtml(err.message) + '. Check your API key.</div>';
-    }
-    chat.scrollTop = chat.scrollHeight;
-    rpBusy = false;
-    input.focus();
-  }
-
-  function escHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
-
-  function updateHints(text) {
-    const t = text.toLowerCase();
-    const hints = [];
-    if (/what do you mean|can you explain|what exactly|rephrase|example/.test(t)) hints.push('Clarification detected');
-    if (/assum|what if|suppose|what else/.test(t)) hints.push('Probing assumptions');
-    if (/evidence|data|how do you know|prove|show me/.test(t)) hints.push('Probing evidence');
-    if (/perspective|how would|someone else|another way|who else/.test(t)) hints.push('Widening perspectives');
-    if (/consequence|what happen|impact|implication|then what/.test(t)) hints.push('Exploring implications');
-    if (/why are we|real challenge|right question|what.s making this/.test(t)) hints.push('Meta-questioning');
-    const used = hints.length ? hints.join(', ') : 'Try a more open-ended question';
-    const suggest = !hints.length ? 'Consider asking: "What do you mean by that?" or "What if the opposite were true?"'
-      : hints.length === 1 ? 'Good! Now try a different type to widen the conversation.'
-      : 'Great range of question types!';
-    document.getElementById('rpHints').innerHTML = '<strong>Detected:</strong> ' + used + '<br><strong>Suggestion:</strong> ' + suggest;
-  }
-
-  document.getElementById('rpSend').addEventListener('click', sendRpMessage);
-  document.getElementById('rpInput').addEventListener('keydown', e => { if (e.key === 'Enter') sendRpMessage(); });
 
   /* ════════════════════════════════════════════
      SMOOTH SCROLL
