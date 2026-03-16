@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flow Guide — Socratic Coach</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  .flow-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+  .flow-table th, .flow-table td { padding: 0.7rem 1rem; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+  .flow-table th { font-weight: 600; color: var(--accent); background: var(--accent-bg); }
+  .flow-table tr:last-child td { border-bottom: none; }
+  .flow-arrow { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-top: 1.5rem; justify-content: center; }
+  .flow-step { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 0.5rem 1rem; font-size: 0.82rem; font-weight: 600; text-align: center; }
+  .flow-step .step-label { font-size: 0.7rem; color: var(--text-muted); font-weight: 400; display: block; }
+  .flow-divider { color: var(--accent-light); font-size: 1.2rem; }
+  @media (max-width: 600px) { .flow-arrow { flex-direction: column; } .flow-divider { transform: rotate(90deg); } }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="brand">Socratic Coach</a>
+  <a href="index.html">6 Types</a>
+  <a href="deck.html">Deck</a>
+  <a href="ceremonies.html">By Ceremony</a>
+  <a href="circular.html">Circular</a>
+  <a href="journal.html">Journal</a>
+  <a href="scenarios.html">Scenarios</a>
+  <a href="worksheet.html">Worksheet</a>
+  <a href="flow.html" class="active">Flow</a>
+</nav>
+
+<section>
+  <div class="container">
+    <h2>Practical Conversation Flow</h2>
+    <p class="lead">A natural coaching flow using the six types. This is not a script &mdash; listen for which type the team needs right now.</p>
+
+    <div class="flow-arrow">
+      <div class="flow-step"><span class="step-label">Opening</span>Clarification</div>
+      <span class="flow-divider">&rarr;</span>
+      <div class="flow-step"><span class="step-label">Deepening</span>Assumptions</div>
+      <span class="flow-divider">&rarr;</span>
+      <div class="flow-step"><span class="step-label">Grounding</span>Evidence</div>
+      <span class="flow-divider">&rarr;</span>
+      <div class="flow-step"><span class="step-label">Widening</span>Perspectives</div>
+      <span class="flow-divider">&rarr;</span>
+      <div class="flow-step"><span class="step-label">Forward</span>Implications</div>
+      <span class="flow-divider">&rarr;</span>
+      <div class="flow-step"><span class="step-label">Reflecting</span>Meta</div>
+    </div>
+
+    <table class="flow-table" style="margin-top:2rem">
+      <thead><tr><th>Phase</th><th>Question Type</th><th>What You're Doing</th><th>Example Moment</th></tr></thead>
+      <tbody>
+        <tr><td>Opening</td><td>Clarification</td><td>Surfacing what the team is actually thinking</td><td>"What's actually on your mind about this sprint?"</td></tr>
+        <tr><td>Deepening</td><td>Assumptions</td><td>Shaking the foundations of unexamined beliefs</td><td>"What are we taking for granted here?"</td></tr>
+        <tr><td>Grounding</td><td>Evidence</td><td>Moving from opinion to data</td><td>"What data do we have? What don't we know?"</td></tr>
+        <tr><td>Widening</td><td>Perspectives</td><td>Breaking tunnel vision, building collective intelligence</td><td>"How would [other role / user / team] see this?"</td></tr>
+        <tr><td>Forward-looking</td><td>Implications</td><td>Connecting decisions to consequences</td><td>"If we do X, then what happens?"</td></tr>
+        <tr><td>Reflecting</td><td>Meta</td><td>Building self-awareness about the thinking process</td><td>"What made this conversation useful?"</td></tr>
+      </tbody>
+    </table>
+
+    <div class="tip" style="margin-top:1.5rem;background:var(--accent-bg);border-radius:6px;padding:0.7rem 1rem;font-size:0.88rem;">
+      <strong>The key skill:</strong> Not following this as a script, but <em>listening for which type of question the team needs right now.</em> If they're vague &rarr; clarify. If they're overconfident &rarr; probe assumptions. If they only see one angle &rarr; widen. If they're avoiding the real issue &rarr; go meta.
+    </div>
+  </div>
+</section>
+
+<button class="fab" id="fabBtn" aria-label="What's happening right now?">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+</button>
+<div class="situation-overlay" id="sitOverlay">
+  <div class="situation-panel">
+    <button class="situation-close" id="sitClose">&times;</button>
+    <h3>What's happening right now?</h3>
+    <p class="subtitle">Tap a situation to get tailored question suggestions.</p>
+    <div class="situation-tags" id="sitTags"></div>
+    <div class="situation-results" id="sitResults"></div>
+  </div>
+</div>
+
+<footer><div class="container"><p>Built for agile coaches who believe in the power of questions over answers.</p></div></footer>
+
+<script src="data.js"></script>
+<script>initSituationSuggester();</script>
+</body>
+</html>

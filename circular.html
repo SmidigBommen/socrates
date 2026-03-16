@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Circular Questions — Socratic Coach</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  .circular-demo { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-top: 1.5rem; }
+  .role-selectors { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; align-items: center; }
+  .role-selectors label { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); }
+  .role-selectors select { padding: 0.4rem 0.8rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem; background: var(--bg); color: var(--text); }
+  .circular-output { background: var(--accent-bg); border-radius: 8px; padding: 1.2rem; font-size: 0.95rem; line-height: 1.7; min-height: 80px; }
+  .circular-output em { color: var(--accent); font-style: normal; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="brand">Socratic Coach</a>
+  <a href="index.html">6 Types</a>
+  <a href="deck.html">Deck</a>
+  <a href="ceremonies.html">By Ceremony</a>
+  <a href="circular.html" class="active">Circular</a>
+  <a href="journal.html">Journal</a>
+  <a href="scenarios.html">Scenarios</a>
+  <a href="worksheet.html">Worksheet</a>
+  <a href="flow.html">Flow</a>
+</nav>
+
+<section>
+  <div class="container">
+    <h2>Circular Questions for Team Dynamics</h2>
+    <p>Circular questions come from systemic family therapy and are a powerful extension of <strong>Type 4 (Perspectives)</strong>. Instead of asking someone about their own view, you ask <strong>person A to describe person B's perspective</strong>. This surfaces hidden dynamics, builds empathy, and reveals misalignment &mdash; without accusation.</p>
+    <p>They work because the person being asked has to genuinely step into someone else's shoes, and the person being described gets to hear how they're perceived.</p>
+
+    <h3>Why they matter for product teams</h3>
+    <ul style="padding-left:1.2rem; margin-bottom:1.5rem;">
+      <li>They highlight the <strong>diversity of assumptions</strong> within a team</li>
+      <li>They explore <strong>interaction patterns</strong> and relational dynamics</li>
+      <li>They help the team develop <strong>systemic solutions</strong> rather than individual fixes</li>
+      <li>They build <strong>co-responsibility and team empowerment</strong></li>
+    </ul>
+
+    <div class="circular-demo">
+      <h3>Interactive: Build a Circular Question</h3>
+      <p style="font-size:0.9rem;color:var(--text-muted);">Select roles to generate contextual circular questions for your team.</p>
+      <div class="role-selectors">
+        <label for="askee">Ask</label>
+        <select id="askee">
+          <option value="developer">a Developer</option>
+          <option value="designer">a Designer</option>
+          <option value="product-owner">the Product Owner</option>
+          <option value="tester">a Tester / QA</option>
+          <option value="scrum-master">the Scrum Master</option>
+          <option value="stakeholder">a Stakeholder</option>
+        </select>
+        <label for="about">about</label>
+        <select id="about">
+          <option value="designer">a Designer</option>
+          <option value="developer">a Developer</option>
+          <option value="product-owner">the Product Owner</option>
+          <option value="tester">a Tester / QA</option>
+          <option value="scrum-master">the Scrum Master</option>
+          <option value="stakeholder">a Stakeholder</option>
+          <option value="team">the whole Team</option>
+          <option value="users">the Users</option>
+        </select>
+      </div>
+      <div class="circular-output" id="circularOutput"></div>
+    </div>
+  </div>
+</section>
+
+<button class="fab" id="fabBtn" aria-label="What's happening right now?">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+</button>
+<div class="situation-overlay" id="sitOverlay">
+  <div class="situation-panel">
+    <button class="situation-close" id="sitClose">&times;</button>
+    <h3>What's happening right now?</h3>
+    <p class="subtitle">Tap a situation to get tailored question suggestions.</p>
+    <div class="situation-tags" id="sitTags"></div>
+    <div class="situation-results" id="sitResults"></div>
+  </div>
+</div>
+
+<footer><div class="container"><p>Built for agile coaches who believe in the power of questions over answers.</p></div></footer>
+
+<script src="data.js"></script>
+<script>
+(function() {
+  const CQ = {
+    developer:{'designer':["What do you think frustrates the designer most about handoffs?","How would the designer describe good dev-design collaboration?","If the designer could change one thing about our workflow, what would it be?"],'product-owner':["What do you think the PO worries about most re: delivery?","How would the PO prioritize differently from you?","What does the PO wish the dev team understood better?"],'tester':["What's the biggest challenge for QA when they receive your code?","How would QA describe our release quality?","What would QA change about our definition of done?"],'scrum-master':["What's the SM's biggest concern about the team right now?","How would the SM describe our dynamics?","What does the SM wish we did differently in ceremonies?"],'stakeholder':["How would stakeholders describe the value we delivered this quarter?","What frustrates stakeholders about our progress communication?","What gap do stakeholders see between ask and delivery?"],'team':["How does the team perceive your recent technical decisions?","What would the team say is our biggest strength?","If the team sent you one anonymous message, what would it say?"],'users':["How would users describe the feature you just built?","What do users care about that we're ignoring?","If a user watched us work for a day, what would surprise them?"]},
+    designer:{'developer':["What's hardest for devs when implementing your designs?","How would devs describe the handoff process?","What do devs wish designers understood about technical constraints?"],'product-owner':["How does the PO balance user needs vs business goals?","What would the PO say about time spent on design research?","What frustrates the PO about the design process?"],'tester':["What's hardest for QA about testing our designs?","How would QA rate our UI consistency?","What edge cases does QA think we miss in design?"],'team':["How does the team perceive the value of design research?","What would the team change about design collaboration?","What frustrates the team most about the design process?"],'users':["What do users struggle with most in our interface?","How would users describe our product to a friend?","What user pain are we overlooking?"]},
+    'product-owner':{'developer':["What do devs find most unclear about our product direction?","How would devs prioritize differently from you?","What do devs need from you that they're not getting?"],'designer':["How would the designer describe our user research approach?","What UX debt does the designer see as biggest?","What would the designer say about how we handle design feedback?"],'tester':["What would QA say about our acceptance criteria clarity?","How does QA view our quality standards?","What gap does QA see between promises and delivery?"],'stakeholder':["What do stakeholders see as the biggest roadmap gap?","How do stakeholders perceive our velocity?","How confident are stakeholders in our next release?"],'team':["How does the team feel about our product direction?","What would the team say about sprint goal clarity?","What does the team need from you that they haven't asked for?"],'users':["What would users change first about our product?","How do users perceive our pace of improvement?","What user need are we most wrong about?"]},
+    tester:{'developer':["What frustrates devs about the QA process?","How would devs rate their own code quality?","What do devs wish QA did differently?"],'designer':["What would the designer say about how well we test UX?","Does the designer see our bugs as important or nitpicky?","What quality priorities does the designer have?"],'product-owner':["What would the PO say about our test coverage?","How does the PO weigh speed vs quality?","What would the PO change about releases?"],'team':["How does the team perceive QA's value?","What's the biggest quality risk according to the team?","What does the team take for granted about testing?"],'users':["What do users experience that our tests miss?","How would users rate our reliability?","What workflows are we under-testing?"]},
+    'scrum-master':{'developer':["What ceremonies do devs find least valuable?","How would devs describe team morale?","What impediment haven't devs voiced yet?"],'product-owner':["What would the PO change about sprint planning?","How does the PO feel about our self-organization?","What process bottleneck does the PO see?"],'team':["How would the team describe psychological safety right now?","What's the one thing holding the team back?","If the team redesigned their process, what changes first?"],'stakeholder':["What do stakeholders understand least about how we work?","How would stakeholders rate our predictability?","What would stakeholders change about our process?"],'users':["How does our process affect user experience?","What would users say about our delivery pace?","What process change would most improve user satisfaction?"]},
+    stakeholder:{'developer':["What's most challenging about your requests for the dev team?","How would the team describe your requirements clarity?","What would devs change about priority communication?"],'product-owner':["How does the PO balance your needs vs others?","What would the PO say about feasibility of your expectations?","What's hardest for the PO about managing your requests?"],'team':["How does the team perceive the priorities you've set?","What would the team say about requirement stability?","What does the team wish you understood about their work?"],'users':["How would users react to the features you've prioritized?","What user needs might conflict with business goals?","How aligned are user needs and stakeholder goals really?"]}
+  };
+  const labels = {'developer':'developer','designer':'designer','product-owner':'Product Owner','tester':'tester','scrum-master':'Scrum Master','stakeholder':'stakeholder','team':'team','users':'users'};
+  const askee = document.getElementById('askee'), about = document.getElementById('about'), out = document.getElementById('circularOutput');
+  function update() {
+    const a = askee.value, b = about.value;
+    if (a === b) { out.innerHTML = '<em>Select different roles</em> to generate a circular question.'; return; }
+    const qs = CQ[a] && CQ[a][b];
+    if (qs && qs.length) {
+      const q = qs[Math.floor(Math.random()*qs.length)];
+      out.innerHTML = '<p style="margin-bottom:0.5rem;font-size:0.8rem;color:var(--text-muted)">Ask <em>'+labels[a]+'</em> about <em>'+labels[b]+'</em>:</p><p style="font-size:1.05rem;font-style:italic;margin:0">"'+q+'"</p><p style="font-size:0.8rem;color:var(--text-muted);margin-top:0.8rem;margin-bottom:0;cursor:pointer" id="nextCirc">Click for another &rarr;</p>';
+      document.getElementById('nextCirc').addEventListener('click', update);
+    } else {
+      out.innerHTML = '<p style="margin-bottom:0.5rem;font-size:0.8rem;color:var(--text-muted)">Ask <em>'+labels[a]+'</em> about <em>'+labels[b]+'</em>:</p><p style="font-style:italic;margin:0">"How do you think <em>'+labels[b]+'</em> would describe the biggest challenge in our way of working?"</p>';
+    }
+  }
+  askee.addEventListener('change', update);
+  about.addEventListener('change', update);
+  update();
+  initSituationSuggester();
+})();
+</script>
+</body>
+</html>

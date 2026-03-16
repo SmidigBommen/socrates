@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Worksheet — Socratic Coach</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  .worksheet { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; margin-top: 1rem; }
+  .ws-step { margin-bottom: 1.2rem; border-left: 3px solid var(--border); padding-left: 1.2rem; transition: border-color var(--transition); }
+  .ws-step.active { border-left-color: var(--accent); }
+  .ws-step label { display: block; font-weight: 600; font-size: 0.92rem; margin-bottom: 0.4rem; cursor: pointer; color: var(--text); }
+  .ws-step label:hover { color: var(--accent); }
+  .ws-step textarea { width: 100%; border: 1px solid var(--border); border-radius: 6px; padding: 0.7rem; font-size: 0.9rem; font-family: inherit; resize: vertical; min-height: 60px; background: var(--bg); transition: border-color var(--transition); }
+  .ws-step textarea:focus { outline: none; border-color: var(--accent); }
+  .ws-step.final { border-left-color: var(--accent); }
+  .ws-step.final label { color: var(--accent); font-size: 1rem; }
+  .ws-step.final textarea { min-height: 80px; background: var(--accent-bg); }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="brand">Socratic Coach</a>
+  <a href="index.html">6 Types</a>
+  <a href="deck.html">Deck</a>
+  <a href="ceremonies.html">By Ceremony</a>
+  <a href="circular.html">Circular</a>
+  <a href="journal.html">Journal</a>
+  <a href="scenarios.html">Scenarios</a>
+  <a href="worksheet.html" class="active">Worksheet</a>
+  <a href="flow.html">Flow</a>
+</nav>
+
+<section>
+  <div class="container">
+    <h2>Cognitive Restructuring Worksheet</h2>
+    <p class="lead">Based on the Socratic questioning cognitive restructuring technique. Use this during 1-on-1 coaching to help a coachee examine and rebalance a thought.</p>
+
+    <div class="worksheet">
+      <div class="ws-step"><label>Thought I want to question:</label><textarea placeholder="Identify a thought that's negatively impacting how you feel..."></textarea></div>
+      <div class="ws-step"><label>1. What is the evidence for this thought? Against it?</label><textarea placeholder="List concrete evidence on both sides..."></textarea></div>
+      <div class="ws-step"><label>2. Am I basing this on feelings rather than facts?</label><textarea placeholder="Distinguish between what you feel and what you know..."></textarea></div>
+      <div class="ws-step"><label>3. Is my thought overly critical?</label><textarea placeholder="Would I say this to a friend in the same situation?"></textarea></div>
+      <div class="ws-step"><label>4. Could my thought be an exaggeration of what's true?</label><textarea placeholder="Am I using words like 'always,' 'never,' 'everyone'?"></textarea></div>
+      <div class="ws-step"><label>5. How might others interpret the same situation differently?</label><textarea placeholder="Consider a colleague, friend, or mentor's perspective..."></textarea></div>
+      <div class="ws-step"><label>6. Is my thought based more on habit or a past experience than what's true now?</label><textarea placeholder="Am I reacting to the current situation or an old pattern?"></textarea></div>
+      <div class="ws-step"><label>7. Is someone else's opinion overly influencing my own?</label><textarea placeholder="Whose voice am I hearing? Is it truly my own assessment?"></textarea></div>
+      <div class="ws-step"><label>8. Is my thought a likely scenario or just a possibility?</label><textarea placeholder="How probable is this, really?"></textarea></div>
+      <div class="ws-step final"><label>Drawing from your answers, rewrite your thought so it's more accurate and balanced:</label><textarea placeholder="A more balanced version of the original thought..."></textarea></div>
+
+      <div style="display:flex;gap:0.8rem;margin-top:1.5rem;flex-wrap:wrap;">
+        <button class="btn btn-secondary" id="wsClear">Clear All</button>
+        <button class="btn btn-primary" id="wsPrint">Print / Save</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<button class="fab" id="fabBtn" aria-label="What's happening right now?">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+</button>
+<div class="situation-overlay" id="sitOverlay">
+  <div class="situation-panel">
+    <button class="situation-close" id="sitClose">&times;</button>
+    <h3>What's happening right now?</h3>
+    <p class="subtitle">Tap a situation to get tailored question suggestions.</p>
+    <div class="situation-tags" id="sitTags"></div>
+    <div class="situation-results" id="sitResults"></div>
+  </div>
+</div>
+
+<footer><div class="container"><p>Built for agile coaches who believe in the power of questions over answers.</p></div></footer>
+
+<script src="data.js"></script>
+<script>
+(function() {
+  document.querySelectorAll('.ws-step').forEach(step => {
+    const ta = step.querySelector('textarea');
+    if (ta) ta.addEventListener('focus', () => {
+      document.querySelectorAll('.ws-step').forEach(s => s.classList.remove('active'));
+      step.classList.add('active');
+    });
+  });
+  document.getElementById('wsClear').addEventListener('click', () => { if (confirm('Clear all worksheet entries?')) document.querySelectorAll('.worksheet textarea').forEach(t => t.value = ''); });
+  document.getElementById('wsPrint').addEventListener('click', () => window.print());
+  initSituationSuggester();
+})();
+</script>
+</body>
+</html>

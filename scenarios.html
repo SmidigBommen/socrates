@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coaching Scenarios — Socratic Coach</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  .scenario-grid { display: flex; flex-direction: column; gap: 0.5rem; }
+  .scenario-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: var(--transition); cursor: pointer; }
+  .scenario-card:hover { box-shadow: var(--shadow); }
+  .scenario-card.open { box-shadow: var(--shadow-lg); border-left: 3px solid var(--accent); }
+  .scenario-header { padding: 1.1rem 1.3rem; display: flex; align-items: center; gap: 0.8rem; user-select: none; }
+  .scenario-icon { font-size: 1.3rem; flex-shrink: 0; }
+  .scenario-header h4 { margin: 0; font-size: 0.95rem; flex: 1; }
+  .scenario-header .card-chevron { width: 18px; height: 18px; }
+  .scenario-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s ease; padding: 0 1.3rem; }
+  .scenario-card.open .scenario-body { max-height: 2000px; padding: 0 1.3rem 1.3rem; padding-left: 3.4rem; }
+  .scenario-body .sc-desc { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 0.8rem; }
+  .scenario-body h5 { font-size: 0.85rem; font-weight: 600; color: var(--accent); margin-bottom: 0.4rem; margin-top: 0.8rem; }
+  .scenario-body .sc-questions { padding-left: 1rem; margin-bottom: 0.5rem; }
+  .scenario-body .sc-questions li { font-size: 0.88rem; margin-bottom: 0.35rem; font-style: italic; }
+  .scenario-body .sc-tip { background: var(--accent-bg); border-radius: 6px; padding: 0.6rem 0.9rem; font-size: 0.84rem; margin-top: 0.6rem; }
+  .scenario-body .sc-tip strong { color: var(--accent); }
+  .scenario-body .sc-avoid { background: #fdf2f2; border-radius: 6px; padding: 0.6rem 0.9rem; font-size: 0.84rem; margin-top: 0.4rem; color: #7c5e5e; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="brand">Socratic Coach</a>
+  <a href="index.html">6 Types</a>
+  <a href="deck.html">Deck</a>
+  <a href="ceremonies.html">By Ceremony</a>
+  <a href="circular.html">Circular</a>
+  <a href="journal.html">Journal</a>
+  <a href="scenarios.html" class="active">Scenarios</a>
+  <a href="worksheet.html">Worksheet</a>
+  <a href="flow.html">Flow</a>
+</nav>
+
+<section>
+  <div class="container">
+    <h2>Coaching Scenarios</h2>
+    <p class="lead">Common agile team situations with recommended questions, coaching tips, and traps to avoid. Click to expand.</p>
+    <div class="scenario-grid" id="scenarioGrid"></div>
+  </div>
+</section>
+
+<button class="fab" id="fabBtn" aria-label="What's happening right now?">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+</button>
+<div class="situation-overlay" id="sitOverlay">
+  <div class="situation-panel">
+    <button class="situation-close" id="sitClose">&times;</button>
+    <h3>What's happening right now?</h3>
+    <p class="subtitle">Tap a situation to get tailored question suggestions.</p>
+    <div class="situation-tags" id="sitTags"></div>
+    <div class="situation-results" id="sitResults"></div>
+  </div>
+</div>
+
+<footer><div class="container"><p>Built for agile coaches who believe in the power of questions over answers.</p></div></footer>
+
+<script src="data.js"></script>
+<script>
+(function() {
+  const scenarios = [
+    { icon:'\u{1F399}', title:'Defensive Developer', desc:'A developer pushes back on code review feedback, taking it personally.', whyHard:'Defensiveness is a self-protection response. Pushing back directly will escalate it. The coach\'s job is to create safety first, then open curiosity.',
+      approach:[{phase:'Start with Clarification',qs:['Help me understand your perspective \u2014 what matters most to you here?','Can you walk me through your thinking on this approach?'],why:'Validates their position before any probing. Reduces threat.'},{phase:'Probe Assumptions gently',qs:['What would need to be true for this feedback to be useful?','What if the reviewer saw something you haven\'t considered yet?'],why:'Reframes from attack to hypothesis. Opens without pushing.'},{phase:'Widen with Perspectives',qs:['If you were reviewing someone else\'s code, what would you focus on?','How would you approach this if giving advice to a junior developer?'],why:'Creates psychological distance from the emotional reaction.'},{phase:'Go Meta if stuck',qs:['What\'s the real concern underneath this for you?','I notice this feels charged \u2014 what\'s at stake?'],why:'Names the dynamic without judging it.'}],
+      tips:['Don\'t rush past the defensiveness \u2014 acknowledge it first.','Avoid "but" after validation ("I hear you, but..."). Use "and" instead.','Silence after a good question is often where the shift happens.'], avoid:['Don\'t side with the reviewer or the developer.','Don\'t say "don\'t take it personally" \u2014 they already are.','Don\'t ask "why" questions early \u2014 they feel accusatory when someone is defensive.'] },
+    { icon:'\u{1F4CB}', title:'Sprint Scope Argument', desc:'The team argues about taking on too much work. PO wants more, devs feel overloaded.', whyHard:'This is often a proxy conflict about trust, predictability, or unspoken pressure from leadership. The surface argument (how many stories) hides the real issue.',
+      approach:[{phase:'Clarify what\'s actually being debated',qs:['Are we debating the amount of work, or how confident we feel about delivering it?','What does "too much" mean specifically \u2014 can we put numbers on it?'],why:'Often the team hasn\'t clearly defined the disagreement.'},{phase:'Probe Assumptions on both sides',qs:['What are we assuming about our capacity based on?','PO: what would happen if we took on fewer stories but delivered them all?'],why:'Challenges optimism bias and fear-based resistance equally.'},{phase:'Surface Evidence',qs:['What happened last sprint when we committed to a similar amount?','What data do we have about our actual velocity?'],why:'Moves from feelings to facts.'},{phase:'Explore Implications',qs:['If we take all of this on and miss, what\'s the cost? If we take less and deliver, what do we gain?','What\'s the consequence of this pattern repeating every sprint?'],why:'Makes trade-offs explicit and visible.'}],
+      tips:['Let both sides feel heard before introducing data.','Frame it as "the team vs. the problem" not "PO vs. developers."','Velocity data is your friend here \u2014 but only after emotions are acknowledged.'], avoid:['Don\'t take sides or arbitrate the outcome.','Don\'t let seniority or volume decide the argument.','Don\'t skip the emotional layer and jump straight to metrics.'] },
+    { icon:'\u{23F0}', title:'Unrealistic Deadline', desc:'The Product Owner pushes a deadline the team thinks is impossible.', whyHard:'The PO is usually under external pressure they haven\'t fully shared. The team feels unheard. Both are right about different things.',
+      approach:[{phase:'Clarify the constraint',qs:['What\'s driving this timeline? Help us understand the business context.','What specifically needs to ship by that date vs. what\'s nice to have?'],why:'Often "the deadline" is actually "something needs to happen by then" \u2014 scope is negotiable.'},{phase:'Probe Evidence',qs:['What data do we have about how long similar work has taken us?','How confident are we in these estimates, and what would make us more confident?'],why:'Grounds the conversation in reality.'},{phase:'Explore Implications together',qs:['If we hit the date but quality suffers, what happens? If we slip but deliver well, what happens?','What\'s the real risk we\'re trying to manage here?'],why:'Shifts from deadline-as-sacred to risk-management conversation.'},{phase:'Find Perspectives',qs:['What would a stakeholder say is the minimum viable delivery for that date?','If we asked users what they\'d rather have \u2014 fast or complete \u2014 what would they say?'],why:'Opens creative solutions like phased delivery.'}],
+      tips:['Help the PO feel safe sharing the external pressure \u2014 they\'re often stuck in the middle.','Frame it as scope negotiation, not deadline negotiation.','A question like "What can we cut?" is more productive than "We can\'t do this."'], avoid:['Don\'t let the team just say "no" without engaging with the business need.','Don\'t let the PO steamroll without acknowledging the team\'s expertise.','Don\'t solve it for them \u2014 facilitate the negotiation.'] },
+    { icon:'\u{1F910}', title:'Quiet Team Member', desc:'Someone has disengaged and barely speaks in retrospectives or meetings.', whyHard:'Silence can mean many things: feeling unsafe, feeling unheard, introversion, or checking out. You can\'t know which without creating space to find out.',
+      approach:[{phase:'Create safety with Clarification',qs:['What\'s on your mind?','I\'d love to hear your take \u2014 what stands out to you?'],why:'Low-stakes, open invitations. No pressure to have a "big" opinion.'},{phase:'Use Circular Questions (Perspectives)',qs:['[To others] What do you think [quiet person] would say is the biggest challenge right now?','[To the person] What do you think the team might be missing in this conversation?'],why:'Circular questions signal that their view matters without putting them on the spot.'},{phase:'Try structured formats',qs:['Let\'s do a round \u2014 one word each: how are you feeling about this sprint?','Everyone write down one concern silently, then we\'ll share.'],why:'Written/structured formats bypass the anxiety of speaking up in a free-for-all.'},{phase:'1-on-1 follow-up',qs:['I noticed you\'ve been quieter lately \u2014 is there anything I can do differently?','What would make it easier for you to share your ideas in the team?'],why:'Sometimes the real conversation needs to happen privately first.'}],
+      tips:['Don\'t call them out publicly ("You\'ve been quiet \u2014 what do you think?"). It backfires.','Create multiple channels for input: writing, async, 1-on-1, small groups.','Watch for the team dynamic that\'s causing the silence \u2014 is someone else dominating?'], avoid:['Don\'t assume they have nothing to say.','Don\'t force participation \u2014 create conditions for it.','Don\'t diagnose the problem before asking them about it.'] },
+    { icon:'\u{2694}', title:'Architecture Conflict', desc:'Two developers disagree strongly about a technical approach and have stopped listening.', whyHard:'Technical debates often become identity debates ("I\'m a microservices person"). Once positions harden, new information stops getting processed.',
+      approach:[{phase:'Find common ground with Clarification',qs:['What problem are we both trying to solve here?','What do you both agree on about what the system needs?'],why:'Refocuses on shared goals rather than competing solutions.'},{phase:'Probe Assumptions on both sides',qs:['What would need to be true about our scale for microservices to be the right call?','What are we assuming about future requirements?'],why:'Turns positions into hypotheses that can be tested.'},{phase:'Demand Evidence',qs:['Can we build a small proof of concept for each approach and compare?','What does the data from our current system tell us about which constraints matter most?'],why:'Moves from opinion to experiment.'},{phase:'Widen Perspectives',qs:['What would a new developer joining the team prefer to work with?','What would the ops team say about maintaining each option?'],why:'Brings in voices beyond the two debaters.'}],
+      tips:['Draw out the underlying values (simplicity vs. scalability) and name them explicitly.','Ask: "What would change your mind?" \u2014 if nothing would, that\'s the real problem.','A time-boxed experiment often resolves what debate cannot.'], avoid:['Don\'t let this become a proxy for a power struggle.','Don\'t pick the "right" technical answer yourself.','Don\'t let the debate drag across multiple sprints without resolution.'] },
+    { icon:'\u{1F3AF}', title:'Stakeholder vs. Team', desc:'A stakeholder demands a feature the team believes is wrong for users.', whyHard:'The stakeholder has organizational power but may lack user contact. The team has user empathy but may lack business context. Both feel unheard.',
+      approach:[{phase:'Probe Evidence from both sides',qs:['What data do we have about what users actually need?','Stakeholder: what business outcome are you trying to achieve with this feature?'],why:'Often the stakeholder\'s real need can be met a different way.'},{phase:'Separate goal from solution',qs:['What if we could achieve that business outcome with a different approach?','What exactly needs to be true for the board presentation to succeed?'],why:'The feature is a proposed solution. The goal behind it may have better solutions.'},{phase:'Widen Perspectives',qs:['How would users prioritize this against the improvements the team has proposed?','What would happen if we shipped this and users didn\'t use it?'],why:'Introduces the user as a third voice in the room.'},{phase:'Explore Implications',qs:['If we build this and it\'s wrong, what\'s the cost to reverse? If we validate first, what do we lose?','What\'s the cost of being wrong vs. the cost of being two weeks slower?'],why:'Frames it as a risk decision rather than a loyalty test.'}],
+      tips:['Help the stakeholder feel heard before challenging their solution.','Frame it as "how might we achieve your goal AND serve users."','Propose a small experiment rather than a binary build/don\'t-build decision.'], avoid:['Don\'t let the team dismiss the stakeholder\'s business concerns.','Don\'t let the stakeholder override without engaging with the evidence.','Don\'t position yourself as the arbiter \u2014 facilitate the conversation.'] },
+  ];
+
+  const grid = document.getElementById('scenarioGrid');
+  const chevron = '<svg class="card-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"/></svg>';
+  scenarios.forEach(sc => {
+    const card = document.createElement('div');
+    card.className = 'scenario-card';
+    card.innerHTML = '<div class="scenario-header"><span class="scenario-icon">'+sc.icon+'</span><h4>'+sc.title+'</h4>'+chevron+'</div>'
+      +'<div class="scenario-body"><p class="sc-desc">'+sc.desc+'</p><h5>Why this is hard</h5><p style="font-size:0.88rem">'+sc.whyHard+'</p>'
+      +sc.approach.map(a => '<h5>'+a.phase+'</h5><ul class="sc-questions">'+a.qs.map(q => '<li>"'+q+'"</li>').join('')+'</ul><p style="font-size:0.82rem;color:var(--text-muted);margin-top:-0.2rem">'+a.why+'</p>').join('')
+      +'<div class="sc-tip"><strong>Tips:</strong><ul style="margin:0.3rem 0 0 1rem">'+sc.tips.map(t => '<li>'+t+'</li>').join('')+'</ul></div>'
+      +'<div class="sc-avoid"><strong>Avoid:</strong><ul style="margin:0.3rem 0 0 1rem">'+sc.avoid.map(a => '<li>'+a+'</li>').join('')+'</ul></div></div>';
+    card.querySelector('.scenario-header').addEventListener('click', () => card.classList.toggle('open'));
+    card.querySelector('.scenario-header').setAttribute('tabindex', '0');
+    card.querySelector('.scenario-header').addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' ') { e.preventDefault(); card.classList.toggle('open'); } });
+    grid.appendChild(card);
+  });
+
+  initSituationSuggester();
+})();
+</script>
+</body>
+</html>

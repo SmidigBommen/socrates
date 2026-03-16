@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>By Ceremony — Socratic Coach</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  .ceremony-results { display: grid; gap: 0.8rem; }
+  .ceremony-item { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.2rem; transition: var(--transition); }
+  .ceremony-item .q-type { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.3rem; }
+  .ceremony-item .q-text { font-size: 0.95rem; font-style: italic; color: var(--text); }
+  .ceremony-item .q-context { font-size: 0.82rem; color: var(--text-muted); margin-top: 0.3rem; }
+  .ceremony-item[hidden] { display: none; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="brand">Socratic Coach</a>
+  <a href="index.html">6 Types</a>
+  <a href="deck.html">Deck</a>
+  <a href="ceremonies.html" class="active">By Ceremony</a>
+  <a href="circular.html">Circular</a>
+  <a href="journal.html">Journal</a>
+  <a href="scenarios.html">Scenarios</a>
+  <a href="worksheet.html">Worksheet</a>
+  <a href="flow.html">Flow</a>
+</nav>
+
+<section>
+  <div class="container">
+    <h2>Questions by Agile Ceremony</h2>
+    <p class="lead">Select a ceremony to see relevant Socratic questions across all six types.</p>
+
+    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1.5rem;">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="planning">Sprint Planning</button>
+      <button class="filter-btn" data-filter="refinement">Refinement</button>
+      <button class="filter-btn" data-filter="review">Sprint Review</button>
+      <button class="filter-btn" data-filter="retro">Retrospective</button>
+      <button class="filter-btn" data-filter="daily">Daily Standup</button>
+      <button class="filter-btn" data-filter="one-on-one">1-on-1 Coaching</button>
+    </div>
+
+    <div class="ceremony-results" id="ceremonyResults"></div>
+  </div>
+</section>
+
+<button class="fab" id="fabBtn" aria-label="What's happening right now?">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+</button>
+<div class="situation-overlay" id="sitOverlay">
+  <div class="situation-panel">
+    <button class="situation-close" id="sitClose">&times;</button>
+    <h3>What's happening right now?</h3>
+    <p class="subtitle">Tap a situation to get tailored question suggestions.</p>
+    <div class="situation-tags" id="sitTags"></div>
+    <div class="situation-results" id="sitResults"></div>
+  </div>
+</div>
+
+<footer><div class="container"><p>Built for agile coaches who believe in the power of questions over answers.</p></div></footer>
+
+<script src="data.js"></script>
+<script>
+(function() {
+  const container = document.getElementById('ceremonyResults');
+  // Render all questions from the bank as ceremony items
+  questionBank.forEach(q => {
+    const div = document.createElement('div');
+    div.className = 'ceremony-item';
+    div.dataset.ceremonies = q.cer;
+    div.innerHTML = '<div class="q-type" style="color:var('+typeCSSVars[q.t]+')">'+q.t+' &middot; '+typeNames[q.t]+'</div>'
+      +'<div class="q-text">"'+q.q+'"</div>'
+      +'<div class="q-context">'+q.ctx+'</div>';
+    container.appendChild(div);
+  });
+
+  const items = container.querySelectorAll('.ceremony-item');
+  document.querySelectorAll('[data-filter]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const f = btn.dataset.filter;
+      items.forEach(item => { item.hidden = f !== 'all' && !item.dataset.ceremonies.split(' ').includes(f); });
+    });
+  });
+
+  initSituationSuggester();
+})();
+</script>
+</body>
+</html>
